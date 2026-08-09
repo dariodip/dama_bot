@@ -1,1 +1,1 @@
-from .handler import remind
+# Package for reminders scheduling and legacy handlers.
