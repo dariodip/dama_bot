@@ -10,7 +10,6 @@ Comandi disponibili:
 
 /start: avvia il bot
 /help: stampa questo messaggio di aiuto
-/remind: crea un promemoria alla data specificata
 """
 
 

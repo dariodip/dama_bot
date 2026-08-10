@@ -64,6 +64,7 @@ Restart=always
 RestartSec=5
 
 Environment=PYTHONUNBUFFERED=1
+Environment=APP_ENV=prod
 
 [Install]
 WantedBy=multi-user.target

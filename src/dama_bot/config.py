@@ -2,7 +2,12 @@ import os
 
 from dotenv import load_dotenv
 
-load_dotenv()
+env = os.getenv("APP_ENV", "dev")
+if env != "prod":
+    load_dotenv(f".env.{env}")
+else:
+    load_dotenv()
+
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")

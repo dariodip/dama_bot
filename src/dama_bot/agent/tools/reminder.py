@@ -5,7 +5,7 @@ from zoneinfo import ZoneInfo
 
 from pydantic import BaseModel, Field
 
-from dama_bot.agent.models import CreateReminderArgs, ToolResult, UserContext
+from dama_bot.agent.models import ToolResult, UserContext
 from dama_bot.agent.registry import ToolRegistry
 from dama_bot.services.reminder import ReminderService
 
@@ -13,6 +13,13 @@ logger = logging.getLogger(__name__)
 
 
 # Argument models
+class CreateReminderArgs(BaseModel):
+    text: str = Field(..., description="Descrizione di cosa ricordare")
+    remind_at: str = Field(
+        ..., description="Data e ora in cui ricordare (formato ISO: YYYY-MM-DDTHH:MM:SS)"
+    )
+
+
 class ListRemindersArgs(BaseModel):
     pass
 

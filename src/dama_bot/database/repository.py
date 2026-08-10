@@ -1,7 +1,7 @@
 import logging
-from datetime import datetime
+from datetime import datetime, date
 
-from dama_bot.database.models import ReminderDB
+from dama_bot.database.models import ReminderDB, FreeDayDB
 
 logger = logging.getLogger(__name__)
 
@@ -113,3 +113,38 @@ class ReminderRepository:
                 session.commit()
                 return True
             return False
+
+
+class FreeDayRepository:
+    def __init__(self, session_factory):
+        self.session_factory = session_factory
+
+    def create(
+        self,
+        date: date,
+        username: str,
+        chat_id: int,
+    ) -> FreeDayDB:
+        with self.session_factory() as session:
+            db_free_day = FreeDayDB(
+                date=date,
+                username=username,
+                chat_id=chat_id,
+            )
+            session.add(db_free_day)
+            session.commit()
+            # Refresh to load auto-generated fields (like id and created_at)
+            session.refresh(db_free_day)
+            return db_free_day
+
+    def get_last_by_user(self, chat_id: int, username: str) -> FreeDayDB | None:
+        with self.session_factory() as session:
+            return (
+                session.query(FreeDayDB)
+                .filter(
+                    FreeDayDB.chat_id == chat_id,
+                    FreeDayDB.username == username,
+                )
+                .order_by(FreeDayDB.date.desc())
+                .first()
+            )

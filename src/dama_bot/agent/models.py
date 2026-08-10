@@ -18,10 +18,3 @@ class ToolResult(BaseModel):
 class AgentResponse(BaseModel):
     message: str
     tool_called: str | None = None
-
-
-class CreateReminderArgs(BaseModel):
-    text: str = Field(..., description="Descrizione di cosa ricordare")
-    remind_at: str = Field(
-        ..., description="Data e ora in cui ricordare (formato ISO: YYYY-MM-DDTHH:MM:SS)"
-    )

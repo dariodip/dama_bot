@@ -22,7 +22,7 @@ class Agent:
     ) -> AgentResponse:
         now = datetime.now(ZoneInfo("Europe/Rome"))
 
-        system_prompt = f"""You are Dama Bot, a personal Telegram assistant.
+        system_prompt = f"""You are Dama Bot, a personal Telegram assistant for Dario and Manuela, a couple living in Italy.
 Current local date and time: {now.isoformat()} (timezone: Europe/Rome).
 
 You must help the user by using the registered tools.
