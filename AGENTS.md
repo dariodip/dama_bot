@@ -56,7 +56,7 @@ The agent should:
 
 Every tool should have:
 
-- a stable name, e.g. `reminder.create`
+- a stable name, e.g. `reminder-create`
 - a short description
 - typed arguments
 - typed result
@@ -66,10 +66,10 @@ Every tool should have:
 
 Prefer domain-oriented tool names:
 
-- `reminder.create`
-- `reminder.list`
-- `reminder.delete`
-- `reminder.update`
+- `reminder-create`
+- `reminder-list_all`
+- `reminder-delete`
+- `reminder-update`
 
 Avoid generic tools such as `database.query` or `execute_python`.
 
@@ -89,8 +89,8 @@ Work incrementally:
 2. Introduce a tool registry.
 3. Convert reminder creation into the first tool.
 4. Route ordinary Telegram messages through the agent.
-5. Add `reminder.list`.
-6. Add `reminder.delete`.
+5. Add `reminder-list_all`.
+6. Add `reminder-delete`.
 7. Remove obsolete command-specific reminder handlers only after equivalent tests pass.
 8. Keep `/start` and `/help` as Telegram handlers.
 
@@ -140,7 +140,7 @@ The refactor is complete only when:
 
 - normal Telegram messages reach the agent
 - the agent has an explicit registry of tools
-- reminder creation works through `reminder.create`
+- reminder creation works through `reminder-create`
 - unsupported capabilities are explicitly reported
 - tool execution is tested
 - existing reminder persistence and scheduling behavior remains intact

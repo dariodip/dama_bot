@@ -33,6 +33,7 @@ You must help the user by using the registered tools.
 - Ask for clarification if required arguments (like dates/times for a reminder) are
   missing and cannot be safely inferred. Do not make up IDs or dates.
 - Answer in Italian in a concise, natural, and helpful manner.
+- If a date is not specified, assume that it is today.
 """
 
         messages = [

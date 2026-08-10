@@ -1,6 +1,5 @@
 from datetime import date, timedelta
 from unittest.mock import MagicMock
-from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -34,9 +33,8 @@ async def test_create_free_day_tool(registry, service_mock):
     app_mock = MagicMock()
 
     args_json = f'{{"date": "{future_str}"}}'
-    res = await registry.execute("free_day.create", args_json, ctx, app_mock)
+    res = await registry.execute("free_day-create", args_json, ctx, app_mock)
 
-    print(res)
     assert res.success is True
     assert "Giorno libero registrato con successo" in res.message
     service_mock.create_free_day.assert_called_once()
@@ -53,7 +51,7 @@ async def test_is_a_free_day(registry, service_mock):
     app_mock = MagicMock()
 
     args_json = f'{{"date": "{test_str}"}}'
-    res = await registry.execute("free_day.is_a_free_day", args_json, ctx, app_mock)
+    res = await registry.execute("free_day-is_a_free_day", args_json, ctx, app_mock)
 
     assert res.success is True
     assert "non" not in res.message
@@ -73,7 +71,7 @@ async def test_is_not_a_free_day(registry, service_mock):
     app_mock = MagicMock()
 
     args_json = f'{{"date": "{test_str}"}}'
-    res = await registry.execute("free_day.is_a_free_day", args_json, ctx, app_mock)
+    res = await registry.execute("free_day-is_a_free_day", args_json, ctx, app_mock)
 
     assert res.success is True
     service_mock.is_a_free_day.assert_called_once()
@@ -90,6 +88,6 @@ async def test_tool_next_free_day(registry, service_mock):
     app_mock = MagicMock()
 
     args_json = '{}'
-    res = await registry.execute("free_day.next", args_json, ctx, app_mock)
+    res = await registry.execute("free_day-next", args_json, ctx, app_mock)
     assert res.success is True
     assert "Il prossimo giorno libero è il" in res.message

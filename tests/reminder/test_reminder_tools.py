@@ -34,7 +34,7 @@ async def test_create_reminder_tool(registry, service_mock):
     app_mock = MagicMock()
 
     args_json = f'{{"text": "dentist appointment", "remind_at": "{future_str}"}}'
-    res = await registry.execute("reminder.create", args_json, ctx, app_mock)
+    res = await registry.execute("reminder-create", args_json, ctx, app_mock)
 
     assert res.success is True
     assert "Promemoria creato con successo" in res.message
@@ -50,7 +50,7 @@ async def test_create_reminder_tool_past_validation(registry, service_mock):
     app_mock = MagicMock()
 
     args_json = f'{{"text": "past task", "remind_at": "{past_str}"}}'
-    res = await registry.execute("reminder.create", args_json, ctx, app_mock)
+    res = await registry.execute("reminder-create", args_json, ctx, app_mock)
 
     assert res.success is False
     assert "nel passato" in res.message
@@ -66,7 +66,7 @@ async def test_list_reminders_tool(registry, service_mock):
     service_mock.list_reminders.return_value = reminders
 
     ctx = UserContext(user_id=456, chat_id=123, username="dario")
-    res = await registry.execute("reminder.list", "{}", ctx, None)
+    res = await registry.execute("reminder-list", "{}", ctx, None)
 
     assert res.success is True
     assert "task 1" in res.message
@@ -81,7 +81,7 @@ async def test_delete_reminder_tool(registry, service_mock):
     ctx = UserContext(user_id=456, chat_id=123, username="dario")
     app_mock = MagicMock()
 
-    res = await registry.execute("reminder.delete", '{"reminder_id": 1}', ctx, app_mock)
+    res = await registry.execute("reminder-delete", '{"reminder_id": 1}', ctx, app_mock)
 
     assert res.success is True
     assert "eliminato con successo" in res.message
@@ -102,7 +102,7 @@ async def test_update_reminder_tool(registry, service_mock):
     args_json = (
         f'{{"reminder_id": 1, "text": "updated task", "remind_at": "{future_dt.isoformat()}"}}'
     )
-    res = await registry.execute("reminder.update", args_json, ctx, app_mock)
+    res = await registry.execute("reminder-update", args_json, ctx, app_mock)
 
     assert res.success is True
     assert "aggiornato con successo" in res.message

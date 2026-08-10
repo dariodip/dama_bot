@@ -27,10 +27,10 @@ A capability is represented by a tool.
 Example:
 
 ```text
-reminder.create
-reminder.list
-reminder.delete
-reminder.update
+reminder-create
+reminder-list
+reminder-delete
+reminder-update
 ```
 
 The model never gets unrestricted access to application internals.
@@ -69,7 +69,7 @@ Target:
 ```text
 Telegram message
   -> Agent
-  -> reminder.create
+  -> reminder-create
   -> reminder service
   -> SQLite
   -> JobQueue

@@ -41,7 +41,7 @@ class UpdateReminderArgs(BaseModel):
 
 def register_reminder_tools(registry: ToolRegistry, service: ReminderService):
     @registry.register(
-        name="reminder.create",
+        name="reminder-create",
         description=(
             "Crea un nuovo promemoria. Richiede il testo e la data/ora a cui "
             "inviarlo (in formato ISO YYYY-MM-DDTHH:MM:SS, timezone Europe/Rome)."
@@ -105,7 +105,7 @@ def register_reminder_tools(registry: ToolRegistry, service: ReminderService):
             )
 
     @registry.register(
-        name="reminder.list",
+        name="reminder-list",
         description=(
             "Elenca tutti i promemoria attivi (non ancora inviati e programmati "
             "per il futuro) per l'utente corrente."
@@ -145,7 +145,7 @@ def register_reminder_tools(registry: ToolRegistry, service: ReminderService):
             )
 
     @registry.register(
-        name="reminder.delete",
+        name="reminder-delete",
         description="Elimina un promemoria esistente identificato dal suo ID numerico.",
         args_schema=DeleteReminderArgs,
     )
@@ -181,7 +181,7 @@ def register_reminder_tools(registry: ToolRegistry, service: ReminderService):
             )
 
     @registry.register(
-        name="reminder.update",
+        name="reminder-update",
         description=(
             "Modifica il testo o la data/ora di un promemoria esistente usando il suo ID numerico."
         ),

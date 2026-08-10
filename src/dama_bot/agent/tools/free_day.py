@@ -19,7 +19,7 @@ class NextFreeDay(BaseModel):
 
 def register_free_day_tools(registry: ToolRegistry, service: FreeDayService):
     @registry.register(
-        name="free_day.create",
+        name="free_day-create",
         description=(
             "Registra un giorno libero."
             "Richiede la data in formato YYYY-MM-DD."
@@ -42,7 +42,7 @@ def register_free_day_tools(registry: ToolRegistry, service: FreeDayService):
             )
 
     @registry.register(
-        name="free_day.is_a_free_day",
+        name="free_day-is_a_free_day",
         description=(
             "Controlla se un giorno è un giorno libero."
             "Richiede la data in formato YYYY-MM-DD."
@@ -67,7 +67,7 @@ def register_free_day_tools(registry: ToolRegistry, service: FreeDayService):
             )
 
     @registry.register(
-        name="free_day.next",
+        name="free_day-next",
         description=(
             "Trova il prossimo giorno libero a partire da oggi."
         ),
