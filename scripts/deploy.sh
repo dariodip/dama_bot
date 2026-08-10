@@ -28,7 +28,6 @@ log() {
 log "Syncing project to Raspberry Pi"
 
 rsync -avz --delete \
-    --exclude '.git/' \
     --exclude '.venv/' \
     --exclude '__pycache__/' \
     --exclude '*.pyc' \
