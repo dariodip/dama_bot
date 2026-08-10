@@ -45,5 +45,12 @@ clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete
 
+ifeq ($(firstword $(MAKECMDGOALS)),deploy)
+  # Extract everything from the 2nd word onward as arguments
+  DEPLOY_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
+  # Turn those arguments into do-nothing targets so Make ignores them
+  $(eval $(DEPLOY_ARGS):;@:)
+endif
+
 deploy:
-	./scripts/deploy.sh
+	./scripts/deploy.sh $(DEPLOY_ARGS)
