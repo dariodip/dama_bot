@@ -21,7 +21,8 @@ GARBAGE_SCHEDULE = {
     6: ORGANICO + " - " + PANNOLINI,
 }
 
-class GarbageService():
+
+class GarbageService:
     def __init__(self):
         pass
 

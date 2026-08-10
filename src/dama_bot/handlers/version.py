@@ -1,9 +1,9 @@
-from dama_bot.config import get_version
-
 import logging
 
 from telegram import Update
 from telegram.ext import ContextTypes
+
+from dama_bot.config import get_version
 
 logger = logging.getLogger(__name__)
 

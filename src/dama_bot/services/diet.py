@@ -1,7 +1,7 @@
 import logging
 from datetime import date
 
-from dama_bot.database.models import MealType, Meal, MealDay
+from dama_bot.database.models import Meal, MealDay, MealType
 from dama_bot.database.repository import DietRepository
 
 logger = logging.getLogger(__name__)
@@ -14,9 +14,7 @@ class DietService:
     def get_meals_by_day(self, username: str, day: date) -> MealDay:
         return self.repository.get_meals_by_day(username, day)
 
-    def get_meals_by_day_and_meal_type(
-        self, username: str, day: date, meal_type: MealType
-    ) -> Meal:
+    def get_meals_by_day_and_meal_type(self, username: str, day: date, meal_type: MealType) -> Meal:
         meal_day = self.repository.get_meals_by_day(username, day)
         match meal_type:
             case MealType.COLAZIONE:

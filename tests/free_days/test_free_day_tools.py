@@ -39,6 +39,7 @@ async def test_create_free_day_tool(registry, service_mock):
     assert "Giorno libero registrato con successo" in res.message
     service_mock.create_free_day.assert_called_once()
 
+
 @pytest.mark.asyncio
 async def test_is_a_free_day(registry, service_mock):
     test_date = date.today() + timedelta(days=2)
@@ -76,10 +77,10 @@ async def test_is_not_a_free_day(registry, service_mock):
     assert res.success is True
     service_mock.is_a_free_day.assert_called_once()
 
+
 @pytest.mark.asyncio
 async def test_tool_next_free_day(registry, service_mock):
     test_date = date.today() - timedelta(days=-1)
-    expected_date = test_date + timedelta(days=2)
 
     db_free_day = FreeDayDB(date=test_date, username="user", chat_id=123)
     service_mock.create_free_day.return_value = db_free_day
@@ -87,7 +88,7 @@ async def test_tool_next_free_day(registry, service_mock):
     ctx = UserContext(user_id=456, chat_id=123, username="dario")
     app_mock = MagicMock()
 
-    args_json = '{}'
+    args_json = "{}"
     res = await registry.execute("free_day-next", args_json, ctx, app_mock)
     assert res.success is True
     assert "Il prossimo giorno libero è il" in res.message

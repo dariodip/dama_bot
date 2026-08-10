@@ -1,23 +1,26 @@
-from datetime import date, timedelta
+from datetime import date
 from unittest.mock import MagicMock
 
 import pytest
 
+import dama_bot.services.garbage as g
 from dama_bot.agent.models import UserContext
 from dama_bot.agent.registry import ToolRegistry
 from dama_bot.agent.tools.garbage import register_garbage_tools
-import dama_bot.services.garbage as g
 from dama_bot.services.garbage import GarbageService
+
 
 @pytest.fixture
 def service_mock():
     return GarbageService()
+
 
 @pytest.fixture
 def registry(service_mock):
     reg = ToolRegistry()
     register_garbage_tools(reg, service_mock)
     return reg
+
 
 @pytest.mark.asyncio
 async def test_garbage_tool_type_for_day(registry, service_mock):
@@ -34,6 +37,7 @@ async def test_garbage_tool_type_for_day(registry, service_mock):
     assert res.success is True
     assert f"Il tipo di rifiuto per il {test_str} è {expected_garbage}" in res.message
     assert res.data["garbage_type"] == expected_garbage
+
 
 @pytest.mark.asyncio
 async def test_garbage_tool_is_not_indifferenziato_week(registry, service_mock):

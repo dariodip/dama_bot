@@ -1,11 +1,10 @@
-from dama_bot.database.models import MealType
-from dama_bot.database.models import Meal, MealDay
 import logging
+from datetime import date, datetime
+
 import yaml
-from datetime import datetime, date
 
 from dama_bot.config import BASEDIR
-from dama_bot.database.models import ReminderDB, FreeDayDB
+from dama_bot.database.models import FreeDayDB, Meal, MealDay, MealType, ReminderDB
 
 logger = logging.getLogger(__name__)
 
@@ -153,10 +152,11 @@ class FreeDayRepository:
                 .first()
             )
 
+
 class DietRepository:
     def get_meals_by_day(self, username: str, day: date) -> MealDay:
-        path = BASEDIR / "data" / "diet" / f"{username}.yml"    
-        with open(path, "r") as f:
+        path = BASEDIR / "data" / "diet" / f"{username}.yml"
+        with open(path) as f:
             day_meal = yaml.safe_load(f)["dieta"]["giorni"][day.weekday()]
         return MealDay(
             colazione=Meal(food=day_meal["colazione"], type=MealType.COLAZIONE),

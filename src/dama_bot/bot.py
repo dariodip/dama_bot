@@ -17,9 +17,4 @@ async def error_handler(update, context):
 
 
 def create_application() -> Application:
-    return (
-        Application.builder()
-        .token(TELEGRAM_BOT_TOKEN)
-        .post_init(post_init)
-        .build()
-    )
+    return Application.builder().token(TELEGRAM_BOT_TOKEN).post_init(post_init).build()

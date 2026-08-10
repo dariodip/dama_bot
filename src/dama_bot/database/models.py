@@ -53,6 +53,7 @@ class Meal:
     type: MealType
     food: list[str]
 
+
 @dataclass
 class MealDay:
     colazione: Meal
