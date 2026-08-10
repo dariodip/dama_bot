@@ -1,6 +1,7 @@
 from dama_bot.services.garbage import GarbageService
 from dama_bot.services.free_day import FreeDayService
-from dama_bot.database.repository import FreeDayRepository
+from dama_bot.services.diet import DietService
+from dama_bot.database.repository import FreeDayRepository, DietRepository
 import logging
 
 from telegram import Update
@@ -12,10 +13,12 @@ from dama_bot.agent.registry import ToolRegistry
 from dama_bot.agent.tools.reminder import register_reminder_tools
 from dama_bot.agent.tools.free_day import register_free_day_tools
 from dama_bot.agent.tools.garbage import register_garbage_tools
+from dama_bot.agent.tools.diet import register_diet_tools
 from dama_bot.database.connection import SessionLocal
 from dama_bot.database.repository import ReminderRepository
 from dama_bot.services.reminder import ReminderService
 from dama_bot.services.garbage import GarbageService
+from dama_bot.services.diet import DietService
 
 logger = logging.getLogger(__name__)
 
@@ -31,6 +34,10 @@ register_free_day_tools(registry, free_day_service)
 
 garbage_service = GarbageService()
 register_garbage_tools(registry, garbage_service)
+
+diet_repository = DietRepository()
+diet_service = DietService(diet_repository)
+register_diet_tools(registry, diet_service)
 
 agent = Agent(registry)
 

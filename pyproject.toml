@@ -9,6 +9,7 @@ dependencies = [
     "pydantic>=2.13.4",
     "python-dotenv>=1.2.2",
     "python-telegram-bot[job-queue]>=22.8",
+    "pyyaml>=6.0.3",
     "sqlalchemy>=2.0.51",
 ]
 

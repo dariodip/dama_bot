@@ -1,7 +1,10 @@
 import os
 import subprocess
+from pathlib import Path
 
 from dotenv import load_dotenv
+
+BASEDIR = Path(__file__).resolve().parent.parent.parent  # project root
 
 env = os.getenv("APP_ENV", "dev")
 if env != "prod":

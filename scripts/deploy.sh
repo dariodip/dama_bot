@@ -33,7 +33,7 @@ rsync -avz --delete \
     --exclude '__pycache__/' \
     --exclude '*.pyc' \
     --exclude '.DS_Store' \
-    --exclude 'data/' \
+    --exclude 'data/*.sql' \
     ./ "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/"
 
 log "Installing dependencies"
