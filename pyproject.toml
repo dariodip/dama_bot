@@ -1,7 +1,7 @@
 [project]
 name = "dama-bot"
 version = "0.1.0"
-description = "Add your description here"
+description = "Personal Telegram assistant powered by an agent-first architecture"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [

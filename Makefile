@@ -8,7 +8,7 @@ help:
 	@echo "Dama Bot development commands"
 	@echo ""
 	@echo "Development:"
-	@echo "  make run              Start Django development server"
+	@echo "  make run              Start the Telegram bot"
 	@echo ""
 	@echo "Quality:"
 	@echo "  make lint             Run Ruff"
