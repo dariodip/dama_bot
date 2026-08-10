@@ -10,6 +10,7 @@ Comandi disponibili:
 
 /start: avvia il bot
 /help: stampa questo messaggio di aiuto
+/version: stampa la versione del bot
 """
 
 
