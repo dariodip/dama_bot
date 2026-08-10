@@ -71,7 +71,8 @@ def register_garbage_tools(registry: ToolRegistry, service: GarbageService):
             is_indifferenziato_week = service.is_indifferenziato_week(day)
             msg = (
                 f"La settimana del {args.date}"
-                + f"{' ' if is_indifferenziato_week else ' non '}è una settimana dell'indifferenziata"
+                + f"{' ' if is_indifferenziato_week else ' non '}"
+                + "è una settimana dell'indifferenziata"
             )
             return ToolResult(
                 success=True,
