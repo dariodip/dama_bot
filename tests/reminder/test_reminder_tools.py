@@ -6,7 +6,7 @@ import pytest
 
 from dama_bot.agent.models import UserContext
 from dama_bot.agent.registry import ToolRegistry
-from dama_bot.agent.tools import register_reminder_tools
+from dama_bot.agent.tools.reminder import register_reminder_tools
 from dama_bot.database.models import ReminderDB
 
 
