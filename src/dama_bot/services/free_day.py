@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, date
+from datetime import timedelta, date
 
 from dama_bot.database.models import FreeDayDB
 from dama_bot.database.repository import FreeDayRepository
@@ -30,3 +30,18 @@ class FreeDayService:
         if last_free_day is None:
             return False
         return (date - last_free_day.date).days % STEP == 0
+
+    def next_free_day(self, chat_id: int, username: str) -> date:
+        last_free_date = self.get_last_by_user(chat_id=chat_id, username=username)
+        if last_free_date is None:
+            raise ValueError("Non è stato registrato alcun giorno libero")
+        
+        last_free_day = last_free_date.date
+
+        today = date.today()
+        if last_free_day >= today:
+            return last_free_day
+        offset = (today - last_free_day).days % STEP
+        if offset == 0:
+            return today
+        return today + timedelta(days=STEP - offset)
