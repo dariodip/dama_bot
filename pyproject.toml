@@ -1,16 +1,23 @@
 [project]
 name = "dama-bot"
 version = "0.1.0"
-description = "Add your description here"
+description = "Personal Telegram assistant powered by an agent-first architecture"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "openai>=2.52.0",
+    "pydantic>=2.13.4",
     "python-dotenv>=1.2.2",
-    "python-telegram-bot>=22.8",
+    "python-telegram-bot[job-queue]>=22.8",
+    "pyyaml>=6.0.3",
+    "sqlalchemy>=2.0.51",
 ]
 
 [dependency-groups]
 dev = [
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "pytest-mock>=3.15.1",
     "ruff>=0.16.1",
     "ty>=0.0.65",
 ]

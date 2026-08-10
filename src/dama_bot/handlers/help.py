@@ -10,7 +10,9 @@ Comandi disponibili:
 
 /start: avvia il bot
 /help: stampa questo messaggio di aiuto
+/version: stampa la versione del bot
 """
+
 
 async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     logger.info(f"Help command requested by {update.effective_user.first_name}")
