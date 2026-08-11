@@ -29,43 +29,31 @@ async def test_diet_tool_get_meals_by_day(registry, service_mock):
     test_str = test_date.isoformat()
     expected_meals = d.MealDay(
         colazione=d.Meal(
-            type=d.MealType.COLAZIONE, 
+            type=d.MealType.COLAZIONE,
             food=[
-                "200 mL di latte parzialmente scremato", 
-                "50 g di fiocchi d'avena", 
-                "100 g di fragole"
-            ]
+                "200 mL di latte parzialmente scremato",
+                "50 g di fiocchi d'avena",
+                "100 g di fragole",
+            ],
         ),
-        spuntino=d.Meal(
-            type=d.MealType.SPUNTINO, 
-            food=[
-                "1 arancia", 
-                "20 g di pistacchi"
-            ]
-        ),
+        spuntino=d.Meal(type=d.MealType.SPUNTINO, food=["1 arancia", "20 g di pistacchi"]),
         pranzo=d.Meal(
             type=d.MealType.PRANZO,
             food=[
                 "180 g di riso basmati",
                 "150 g di petto di pollo",
                 "peperoni e zucchine",
-                "1 cucchiaio di olio extravergine d'oliva"
-            ]
+                "1 cucchiaio di olio extravergine d'oliva",
+            ],
         ),
-        merenda=d.Meal(
-            type=d.MealType.MERENDA,
-            food=[
-                "150 g di skyr",
-                "1 kiwi"
-            ]
-        ),
+        merenda=d.Meal(type=d.MealType.MERENDA, food=["150 g di skyr", "1 kiwi"]),
         cena=d.Meal(
             type=d.MealType.CENA,
             food=[
                 "220 g di salmone al forno",
                 "spinaci saltati",
                 "1 cucchiaio di olio extravergine d'oliva",
-                "100 g di pane integrale"
+                "100 g di pane integrale",
             ],
         ),
     )
@@ -87,12 +75,12 @@ async def test_diet_tool_get_meals_by_day_and_meal_type(registry, service_mock):
     test_date = date(2026, 8, 10)
     test_str = test_date.isoformat()
     expected_meal = d.Meal(
-        type=d.MealType.COLAZIONE, 
+        type=d.MealType.COLAZIONE,
         food=[
-            "200 mL di latte parzialmente scremato", 
-            "50 g di fiocchi d'avena", 
-            "100 g di fragole"
-        ]
+            "200 mL di latte parzialmente scremato",
+            "50 g di fiocchi d'avena",
+            "100 g di fragole",
+        ],
     )
 
     args_json = f'{{"date": "{test_str}", "meal_type": "COLAZIONE"}}'
