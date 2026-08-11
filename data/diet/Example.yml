@@ -1,0 +1,227 @@
+dieta:
+  giorni:
+    0:
+      colazione:
+        - "200 mL di latte parzialmente scremato"
+        - "50 g di fiocchi d'avena"
+        - "100 g di fragole"
+      spuntino:
+        - "1 arancia"
+        - "20 g di pistacchi"
+      pranzo:
+        - "180 g di riso basmati"
+        - "150 g di petto di pollo"
+        - "peperoni e zucchine"
+        - "1 cucchiaio di olio extravergine d'oliva"
+      merenda:
+        - "150 g di skyr"
+        - "1 kiwi"
+      cena:
+        - "220 g di salmone al forno"
+        - "spinaci saltati"
+        - "1 cucchiaio di olio extravergine d'oliva"
+        - "100 g di pane integrale"
+
+    1:
+      colazione:
+        - "2 fette di pane integrale tostato"
+        - "2 uova strapazzate"
+        - "1 kiwi"
+      spuntino:
+        - "1 pera"
+        - "25 g di anacardi"
+      pranzo:
+        - "180 g di pasta integrale con pomodoro"
+        - "150 g di mozzarella"
+        - "melanzane grigliate"
+        - "1 cucchiaio di olio extravergine d'oliva"
+      merenda:
+        - "1 yogurt naturale"
+        - "20 g di fiocchi d'avena"
+      cena:
+        - "250 g di tacchino alla piastra"
+        - "broccoli al vapore"
+        - "1 cucchiaio di olio extravergine d'oliva"
+        - "250 g di patate al forno"
+
+    2:
+      colazione:
+        - "170 g di yogurt greco"
+        - "40 g di granola"
+        - "1 banana piccola"
+      spuntino:
+        - "1 mela"
+        - "20 g di nocciole"
+      pranzo:
+        - "160 g di orzo"
+        - "120 g di lenticchie cotte"
+        - "pomodorini"
+        - "rucola"
+        - "1 cucchiaio di olio extravergine d'oliva"
+      merenda:
+        - "3 gallette di mais"
+        - "70 g di bresaola"
+      cena:
+        - "300 g di orata al cartoccio"
+        - "finocchi e arance in insalata"
+        - "1 cucchiaio di olio extravergine d'oliva"
+        - "120 g di pane di segale"
+
+    3:
+      colazione:
+        - "1 fetta di pane ai cereali"
+        - "40 g di ricotta"
+        - "20 g di miele"
+        - "1 pesca"
+      spuntino:
+        - "1 yogurt proteico"
+        - "1 mela"
+      pranzo:
+        - "180 g di cous cous"
+        - "150 g di ceci cotti"
+        - "melanzane e zucchine"
+        - "1 cucchiaio di olio extravergine d'oliva"
+      merenda:
+        - "150 g di melone"
+        - "25 g di mandorle"
+      cena:
+        - "220 g di filetto di manzo"
+        - "insalata mista"
+        - "1 cucchiaio di olio extravergine d'oliva"
+        - "130 g di pane integrale"
+
+    4:
+      colazione:
+        - "200 mL di bevanda d'avena"
+        - "60 g di cereali integrali"
+        - "1 pera"
+      spuntino:
+        - "150 g di skyr"
+        - "100 g di mirtilli"
+      pranzo:
+        - "170 g di riso integrale"
+        - "120 g di fagioli borlotti cotti"
+        - "pomodorini e rucola"
+        - "1 cucchiaio di olio extravergine d'oliva"
+      merenda:
+        - "2 fette Wasa"
+        - "60 g di prosciutto cotto"
+      cena:
+        - "230 g di lonza di maiale al forno"
+        - "cavolfiore gratinato leggermente"
+        - "1 cucchiaio di olio extravergine d'oliva"
+        - "120 g di pane"
+
+    5:
+      colazione:
+        - "2 uova strapazzate"
+        - "60 g di pane integrale"
+        - "1 arancia"
+      spuntino:
+        - "1 banana"
+        - "20 g di noci"
+      pranzo:
+        - "200 g di pasta con pesto di rucola"
+        - "100 g di ricotta"
+        - "pomodori e cetrioli"
+        - "1 cucchiaino di olio extravergine d'oliva"
+      merenda:
+        - "1 dessert proteico"
+      cena:
+        - "1 piadina integrale con pollo, lattuga e pomodoro"
+        - "verdure grigliate"
+
+    6:
+      colazione:
+        scelta: "scegliere una colazione della settimana"
+      spuntino:
+        scelta: "scegliere uno spuntino della settimana"
+      pranzo:
+        - "libero"
+      merenda:
+        scelta: "scegliere una merenda della settimana"
+      cena:
+        scelta: "scegliere una cena della settimana"
+
+sostituzioni:
+  colazione_e_spuntini:
+    - "Yogurt greco con skyr o yogurt bianco naturale"
+    - "Bevanda d'avena con bevanda di soia o latte parzialmente scremato"
+    - "Pane integrale con pane ai cereali, fette Wasa o gallette"
+    - "Uova con ricotta magra o fiocchi di latte"
+    - "Dessert proteico con yogurt greco o skyr"
+  carboidrati_a_pranzo:
+    - "Riso basmati con riso integrale o parboiled"
+    - "Pasta integrale"
+    - "Orzo"
+    - "Cous cous"
+    - "Farro"
+  legumi:
+    - "Lenticchie con ceci, fagioli, piselli o borlotti"
+  carne:
+    - "Pollo con tacchino o coniglio"
+    - "Prosciutto cotto con bresaola o fesa di tacchino"
+    - "Manzo con vitello o maiale"
+  pesce:
+    - "Salmone con trota o sgombro"
+    - "Orata con spigola o nasello"
+    - "Calamari con seppie o polpo"
+  verdure_ortaggi:
+    - "Scegliere liberamente verdure e ortaggi freschi di stagione"
+  frutta:
+    - "Scegliere frutta fresca di stagione"
+
+ricetta_pancakes:
+  ingredienti:
+    - "1 uovo"
+    - "80 g di albume d'uovo"
+    - "40 g di farina d'avena"
+    - "50 g di yogurt greco"
+    - "1/2 banana schiacciata"
+    - "1 punta di cucchiaino di lievito per dolci"
+    - "cannella a piacere"
+  preparazione: "Mescolare l'uovo con l'albume, aggiungere la banana schiacciata, lo yogurt, la farina d'avena, il lievito e la cannella. Cuocere piccoli pancakes in una padella antiaderente leggermente unta."
+
+indicazioni_generali:
+  - "Utilizzare erbe aromatiche, spezie, limone e aceto a piacere, limitando il sale"
+  - "Bere circa 2 litri di acqua durante la giornata"
+  - "Durante l'attività fisica aumentare gradualmente l'assunzione di liquidi"
+  - "È possibile scambiare il pranzo con la cena mantenendo le rispettive quantità"
+  - "Le grammature indicate si riferiscono agli alimenti al netto degli scarti"
+  - "Le verdure possono essere variate liberamente rispettando la stagionalità"
+
+tecniche_di_cottura:
+  pasta_riso_cereali:
+    - "Con passata di pomodoro e basilico"
+    - "Con verdure saltate"
+    - "Con curcuma e spezie"
+    - "In insalata con verdure fresche"
+  carne:
+    - "Alla piastra"
+    - "Al forno con erbe aromatiche"
+    - "In umido con pomodoro"
+    - "Con limone e rosmarino"
+    - "Con cipolla e paprika"
+    - "Cotta in padella antiaderente con poco vino bianco"
+  prodotti_del_mare:
+    - "Alla griglia"
+    - "Al cartoccio con limone e aromi"
+    - "Al forno con pomodorini"
+    - "Al vapore"
+    - "In umido con pomodoro e prezzemolo"
+  verdure:
+    - "Al vapore"
+    - "Al forno con spezie"
+    - "Grigliate"
+    - "Ripassate in padella con aglio e aromi"
+    - "Crude in insalata"
+  legumi:
+    - "Bolliti e conditi con erbe aromatiche"
+    - "In zuppa con verdure"
+    - "Ripassati in padella con pomodoro"
+  patate:
+    - "Al forno con rosmarino"
+    - "Al vapore"
+    - "Bollite e condite con prezzemolo"
+    - "In insalata con verdure"
+    - "Al cartoccio"

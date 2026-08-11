@@ -10,4 +10,6 @@ wheels/
 .venv
 .env
 .env.dev
-data/
+*.sqlite3
+data/diet/*
+!data/diet/Example.yml
