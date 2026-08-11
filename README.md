@@ -1,6 +1,12 @@
 # Dama Bot
 
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/dariodip/dama_bot/ci.yml)
+![GitHub Release](https://img.shields.io/github/v/release/dariodip/dama_bot)
+
+
 A personal Telegram assistant for Dario and Manuela, powered by an **agent-first architecture**. Natural-language messages are routed through an OpenAI-backed agent that decides which registered tools to invoke, keeping Telegram as a thin interface layer.
+
+This is a personal project and is not intended for public use. It is a work in progress and is subject to change at any time. I've decided to document the design and implementation decisions in the [docs](docs) directory to share my learning process with the community.
 
 ## Features
 
