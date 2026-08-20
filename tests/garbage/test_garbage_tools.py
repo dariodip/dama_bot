@@ -3,11 +3,10 @@ from unittest.mock import MagicMock
 
 import pytest
 
-import dama_bot.services.garbage as g
 from dama_bot.agent.models import UserContext
 from dama_bot.agent.registry import ToolRegistry
-from dama_bot.agent.tools.garbage import register_garbage_tools
-from dama_bot.services.garbage import GarbageService
+from dama_bot.plugins.garbage.service import MULTIMATERIALE, GarbageService
+from dama_bot.plugins.garbage.tools import get_garbage_tools
 
 
 @pytest.fixture
@@ -18,7 +17,8 @@ def service_mock():
 @pytest.fixture
 def registry(service_mock):
     reg = ToolRegistry()
-    register_garbage_tools(reg, service_mock)
+    for tool in get_garbage_tools(service_mock):
+        reg.register_tool(tool)
     return reg
 
 
@@ -26,7 +26,7 @@ def registry(service_mock):
 async def test_garbage_tool_type_for_day(registry, service_mock):
     test_date = date(2026, 8, 10)
     test_str = test_date.isoformat()
-    expected_garbage = g.MULTIMATERIALE
+    expected_garbage = MULTIMATERIALE
 
     args_json = f'{{"date": "{test_str}"}}'
     ctx = UserContext(user_id=456, chat_id=123, username="dario")

@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 
 from dama_bot.agent.core import Agent
 from dama_bot.agent.models import ToolResult, UserContext
+from dama_bot.agent.plugin import FunctionTool
 from dama_bot.agent.registry import ToolRegistry
 
 
@@ -19,11 +20,17 @@ def registry():
 
 
 def test_tool_registry_registration(registry):
-    @registry.register(
-        name="dummy.tool", description="A dummy tool for testing", args_schema=DummyArgs
-    )
     def dummy_func(args, user_context, application):
         return ToolResult(success=True, message=f"Got {args.value}")
+
+    registry.register_tool(
+        FunctionTool(
+            name="dummy.tool",
+            description="A dummy tool for testing",
+            args_schema=DummyArgs,
+            func=dummy_func,
+        )
+    )
 
     assert "dummy.tool" in registry.tools
     tool = registry.tools["dummy.tool"]
@@ -33,9 +40,12 @@ def test_tool_registry_registration(registry):
 
 @pytest.mark.asyncio
 async def test_tool_registry_execution_success(registry):
-    @registry.register(name="dummy.tool", description="Desc", args_schema=DummyArgs)
     async def dummy_func(args, user_context, application):
         return ToolResult(success=True, message=f"Value: {args.value}")
+
+    registry.register_tool(
+        FunctionTool(name="dummy.tool", description="Desc", args_schema=DummyArgs, func=dummy_func)
+    )
 
     ctx = UserContext(user_id=1, chat_id=2)
     res = await registry.execute("dummy.tool", '{"value": "hello"}', ctx, None)
@@ -46,15 +56,18 @@ async def test_tool_registry_execution_success(registry):
 
 @pytest.mark.asyncio
 async def test_tool_registry_invalid_args(registry):
-    @registry.register(name="dummy.tool", description="Desc", args_schema=DummyArgs)
     def dummy_func(args, user_context, application):
         return ToolResult(success=True, message="ok")
+
+    registry.register_tool(
+        FunctionTool(name="dummy.tool", description="Desc", args_schema=DummyArgs, func=dummy_func)
+    )
 
     ctx = UserContext(user_id=1, chat_id=2)
     # Missing required 'value' key
     res = await registry.execute("dummy.tool", "{}", ctx, None)
     assert res.success is False
-    assert "Parametri non validi" in res.message
+    assert "Invalid arguments" in res.message
 
 
 @pytest.mark.asyncio
@@ -85,9 +98,14 @@ async def test_agent_handle_message_no_tool(mocker, registry):
 @pytest.mark.asyncio
 async def test_agent_handle_message_with_tool_call(mocker, registry):
     # Register a tool
-    @registry.register(name="test.tool", description="Test tool", args_schema=DummyArgs)
     async def dummy_tool(args, user_context, application):
         return ToolResult(success=True, message=f"Tool success: {args.value}")
+
+    registry.register_tool(
+        FunctionTool(
+            name="test.tool", description="Test tool", args_schema=DummyArgs, func=dummy_tool
+        )
+    )
 
     mock_openai = MagicMock()
     mocker.patch("dama_bot.agent.core.AsyncOpenAI", return_value=mock_openai)

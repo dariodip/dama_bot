@@ -2,6 +2,8 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+import dama_bot.plugins.free_day.models  # noqa: F401
+import dama_bot.plugins.reminders.models  # noqa: F401
 from dama_bot.database.models import Base
 
 

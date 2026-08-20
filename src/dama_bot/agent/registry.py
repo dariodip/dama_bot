@@ -1,34 +1,21 @@
-import asyncio
 import json
 import logging
-from collections.abc import Callable
 from typing import Any
 
-from pydantic import BaseModel, ValidationError
+from pydantic import ValidationError
 
 from dama_bot.agent.models import ToolResult, UserContext
+from dama_bot.agent.plugin import Tool
 
 logger = logging.getLogger(__name__)
-
-
-class Tool:
-    def __init__(self, name: str, description: str, args_schema: type[BaseModel], func: Callable):
-        self.name = name
-        self.description = description
-        self.args_schema = args_schema
-        self.func = func
 
 
 class ToolRegistry:
     def __init__(self):
         self.tools: dict[str, Tool] = {}
 
-    def register(self, name: str, description: str, args_schema: type[BaseModel]):
-        def decorator(func: Callable):
-            self.tools[name] = Tool(name, description, args_schema, func)
-            return func
-
-        return decorator
+    def register_tool(self, tool: Tool):
+        self.tools[tool.name] = tool
 
     def get_openai_tools(self) -> list[dict]:
         res = []
@@ -45,6 +32,9 @@ class ToolRegistry:
             )
         return res
 
+    def get_tools(self) -> dict[str, str]:
+        return {tool.name: tool.description for tool in self.tools.values()}
+
     async def execute(
         self, name: str, args_str: str, user_context: UserContext, application: Any
     ) -> ToolResult:
@@ -57,25 +47,21 @@ class ToolRegistry:
             args = tool.args_schema(**args_dict)
         except (json.JSONDecodeError, ValidationError) as e:
             return ToolResult(
-                success=False, message=f"Parametri non validi per lo strumento '{name}': {str(e)}"
+                success=False, message=f"Invalid arguments for tool '{name}': {str(e)}"
             )
 
         try:
-            if asyncio.iscoroutinefunction(tool.func):
-                result = await tool.func(args, user_context, application)
-            else:
-                result = tool.func(args, user_context, application)
+            result = await tool.execute(args, user_context, application)
 
             if not isinstance(result, ToolResult):
                 raise TypeError(
-                    f"Il tool '{name}' deve restituire un oggetto ToolResult, "
-                    f"ricevuto {type(result)}"
+                    f"The tool '{name}' must return a ToolResult object, got {type(result)}"
                 )
 
             return result
         except Exception as e:
-            logger.exception(f"Errore durante l'esecuzione del tool {name}")
+            logger.exception(f"Unexpected error while executing tool '{name}': {str(e)}")
             return ToolResult(
                 success=False,
-                message=f"Errore imprevisto durante l'esecuzione del tool '{name}': {str(e)}",
+                message=f"Unexpected error while executing tool '{name}': {str(e)}",
             )

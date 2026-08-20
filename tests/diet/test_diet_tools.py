@@ -3,12 +3,12 @@ from unittest.mock import MagicMock
 
 import pytest
 
-import dama_bot.services.diet as d
 from dama_bot.agent.models import UserContext
 from dama_bot.agent.registry import ToolRegistry
-from dama_bot.agent.tools.diet import register_diet_tools
-from dama_bot.database.repository import DietRepository
-from dama_bot.services.diet import DietService
+from dama_bot.plugins.diet.models import Meal, MealDay, MealType
+from dama_bot.plugins.diet.repository import DietRepository
+from dama_bot.plugins.diet.service import DietService
+from dama_bot.plugins.diet.tools import get_diet_tools
 
 
 @pytest.fixture
@@ -19,7 +19,8 @@ def service_mock():
 @pytest.fixture
 def registry(service_mock):
     reg = ToolRegistry()
-    register_diet_tools(reg, service_mock)
+    for tool in get_diet_tools(service_mock):
+        reg.register_tool(tool)
     return reg
 
 
@@ -27,18 +28,18 @@ def registry(service_mock):
 async def test_diet_tool_get_meals_by_day(registry, service_mock):
     test_date = date(2026, 8, 10)
     test_str = test_date.isoformat()
-    expected_meals = d.MealDay(
-        colazione=d.Meal(
-            type=d.MealType.COLAZIONE,
+    expected_meals = MealDay(
+        colazione=Meal(
+            type=MealType.COLAZIONE,
             food=[
                 "200 mL di latte parzialmente scremato",
                 "50 g di fiocchi d'avena",
                 "100 g di fragole",
             ],
         ),
-        spuntino=d.Meal(type=d.MealType.SPUNTINO, food=["1 arancia", "20 g di pistacchi"]),
-        pranzo=d.Meal(
-            type=d.MealType.PRANZO,
+        spuntino=Meal(type=MealType.SPUNTINO, food=["1 arancia", "20 g di pistacchi"]),
+        pranzo=Meal(
+            type=MealType.PRANZO,
             food=[
                 "180 g di riso basmati",
                 "150 g di petto di pollo",
@@ -46,9 +47,9 @@ async def test_diet_tool_get_meals_by_day(registry, service_mock):
                 "1 cucchiaio di olio extravergine d'oliva",
             ],
         ),
-        merenda=d.Meal(type=d.MealType.MERENDA, food=["150 g di skyr", "1 kiwi"]),
-        cena=d.Meal(
-            type=d.MealType.CENA,
+        merenda=Meal(type=MealType.MERENDA, food=["150 g di skyr", "1 kiwi"]),
+        cena=Meal(
+            type=MealType.CENA,
             food=[
                 "220 g di salmone al forno",
                 "spinaci saltati",
@@ -74,8 +75,8 @@ async def test_diet_tool_get_meals_by_day(registry, service_mock):
 async def test_diet_tool_get_meals_by_day_and_meal_type(registry, service_mock):
     test_date = date(2026, 8, 10)
     test_str = test_date.isoformat()
-    expected_meal = d.Meal(
-        type=d.MealType.COLAZIONE,
+    expected_meal = Meal(
+        type=MealType.COLAZIONE,
         food=[
             "200 mL di latte parzialmente scremato",
             "50 g di fiocchi d'avena",

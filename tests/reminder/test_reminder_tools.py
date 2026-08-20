@@ -6,8 +6,8 @@ import pytest
 
 from dama_bot.agent.models import UserContext
 from dama_bot.agent.registry import ToolRegistry
-from dama_bot.agent.tools.reminder import register_reminder_tools
-from dama_bot.database.models import ReminderDB
+from dama_bot.plugins.reminders.models import ReminderDB
+from dama_bot.plugins.reminders.tools import get_reminder_tools
 
 
 @pytest.fixture
@@ -18,7 +18,8 @@ def service_mock():
 @pytest.fixture
 def registry(service_mock):
     reg = ToolRegistry()
-    register_reminder_tools(reg, service_mock)
+    for tool in get_reminder_tools(service_mock):
+        reg.register_tool(tool)
     return reg
 
 

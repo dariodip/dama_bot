@@ -1,8 +1,8 @@
 import logging
 from datetime import date, timedelta
 
-from dama_bot.database.models import FreeDayDB
-from dama_bot.database.repository import FreeDayRepository
+from dama_bot.plugins.free_day.models import FreeDayDB
+from dama_bot.plugins.free_day.repository import FreeDayRepository
 
 logger = logging.getLogger(__name__)
 
@@ -17,9 +17,7 @@ class FreeDayService:
         logger.info(
             "Creating free day via service: " + f"'{date}' for user {username} in chat {chat_id}"
         )
-        db_free_day = self.repository.create(date=date, username=username, chat_id=chat_id)
-
-        return db_free_day
+        return self.repository.create(date=date, username=username, chat_id=chat_id)
 
     def get_last_by_user(self, chat_id: int, username: str) -> FreeDayDB | None:
         return self.repository.get_last_by_user(chat_id=chat_id, username=username)

@@ -5,8 +5,8 @@ import pytest
 
 from dama_bot.agent.models import UserContext
 from dama_bot.agent.registry import ToolRegistry
-from dama_bot.agent.tools.free_day import register_free_day_tools
-from dama_bot.database.models import FreeDayDB
+from dama_bot.plugins.free_day.models import FreeDayDB
+from dama_bot.plugins.free_day.tools import get_free_day_tools
 
 
 @pytest.fixture
@@ -17,7 +17,8 @@ def service_mock():
 @pytest.fixture
 def registry(service_mock):
     reg = ToolRegistry()
-    register_free_day_tools(reg, service_mock)
+    for tool in get_free_day_tools(service_mock):
+        reg.register_tool(tool)
     return reg
 
 

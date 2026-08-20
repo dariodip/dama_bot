@@ -3,8 +3,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from dama_bot.database.models import ReminderDB
-from dama_bot.services.reminder import ReminderService
+from dama_bot.plugins.reminders.models import ReminderDB
+from dama_bot.plugins.reminders.service import ReminderService
 
 
 @pytest.fixture
@@ -18,7 +18,7 @@ def service(repo_mock):
 
 
 def test_create_reminder(service, repo_mock, mocker):
-    schedule_mock = mocker.patch("dama_bot.services.reminder.schedule_reminder")
+    schedule_mock = mocker.patch("dama_bot.plugins.reminders.service.schedule_reminder")
 
     remind_at = datetime.now() + timedelta(hours=1)
     db_reminder = ReminderDB(id=1, text="test", remind_at=remind_at, chat_id=123, username="user")
@@ -51,7 +51,7 @@ def test_list_reminders(service, repo_mock):
 
 
 def test_delete_reminder(service, repo_mock, mocker):
-    cancel_mock = mocker.patch("dama_bot.services.reminder.cancel_reminder_job")
+    cancel_mock = mocker.patch("dama_bot.plugins.reminders.service.cancel_reminder_job")
     repo_mock.delete.return_value = True
 
     app_mock = MagicMock()
@@ -63,8 +63,8 @@ def test_delete_reminder(service, repo_mock, mocker):
 
 
 def test_update_reminder(service, repo_mock, mocker):
-    cancel_mock = mocker.patch("dama_bot.services.reminder.cancel_reminder_job")
-    schedule_mock = mocker.patch("dama_bot.services.reminder.schedule_reminder")
+    cancel_mock = mocker.patch("dama_bot.plugins.reminders.service.cancel_reminder_job")
+    schedule_mock = mocker.patch("dama_bot.plugins.reminders.service.schedule_reminder")
 
     remind_at = datetime.now() + timedelta(hours=1)
     db_reminder = ReminderDB(id=1, text="orig", remind_at=remind_at, chat_id=123, username="user")

@@ -5,8 +5,8 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 from dama_bot.agent.models import ToolResult, UserContext
-from dama_bot.agent.registry import ToolRegistry
-from dama_bot.services.garbage import GarbageService
+from dama_bot.agent.plugin import FunctionTool, Tool
+from dama_bot.plugins.garbage.service import GarbageService
 
 logger = logging.getLogger(__name__)
 
@@ -29,14 +29,7 @@ class IndifferenziatoWeek(BaseModel):
     )
 
 
-def register_garbage_tools(registry: ToolRegistry, service: GarbageService):
-    @registry.register(
-        name="garbage-get_garbage_type_for_day",
-        description=(
-            "Restituisce il tipo di rifiuto da gettare in una data specificain formato YYYY-MM-DD"
-        ),
-        args_schema=GarbageTypeForDay,
-    )
+def get_garbage_tools(service: GarbageService) -> list[Tool]:
     async def get_garbage_type_for_day(
         args: GarbageTypeForDay, user_context: UserContext, application: Any
     ) -> ToolResult:
@@ -55,14 +48,6 @@ def register_garbage_tools(registry: ToolRegistry, service: GarbageService):
                 message=f"Errore durante il recupero del tipo di rifiuto: {str(e)}",
             )
 
-    @registry.register(
-        name="garbage-is_indifferenziato_week",
-        description=(
-            "Controlla se una data ricade in una settimana dell'indifferenziata"
-            "in formato YYYY-MM-DD"
-        ),
-        args_schema=IndifferenziatoWeek,
-    )
     async def is_indifferenziato_week(
         args: IndifferenziatoWeek, user_context: UserContext, application: Any
     ) -> ToolResult:
@@ -85,3 +70,24 @@ def register_garbage_tools(registry: ToolRegistry, service: GarbageService):
                 success=False,
                 message=f"Errore durante il controllo della settimana: {str(e)}",
             )
+
+    return [
+        FunctionTool(
+            name="garbage-get_garbage_type_for_day",
+            description=(
+                "Restituisce il tipo di rifiuto da gettare in una data"
+                " specificain formato YYYY-MM-DD"
+            ),
+            args_schema=GarbageTypeForDay,
+            func=get_garbage_type_for_day,
+        ),
+        FunctionTool(
+            name="garbage-is_indifferenziato_week",
+            description=(
+                "Controlla se una data ricade in una settimana dell'indifferenziata"
+                "in formato YYYY-MM-DD"
+            ),
+            args_schema=IndifferenziatoWeek,
+            func=is_indifferenziato_week,
+        ),
+    ]

@@ -6,8 +6,8 @@ from zoneinfo import ZoneInfo
 from pydantic import BaseModel, Field
 
 from dama_bot.agent.models import ToolResult, UserContext
-from dama_bot.agent.registry import ToolRegistry
-from dama_bot.services.reminder import ReminderService
+from dama_bot.agent.plugin import FunctionTool, Tool
+from dama_bot.plugins.reminders.service import ReminderService
 
 logger = logging.getLogger(__name__)
 
@@ -39,24 +39,14 @@ class UpdateReminderArgs(BaseModel):
     )
 
 
-def register_reminder_tools(registry: ToolRegistry, service: ReminderService):
-    @registry.register(
-        name="reminder-create",
-        description=(
-            "Crea un nuovo promemoria. Richiede il testo e la data/ora a cui "
-            "inviarlo (in formato ISO YYYY-MM-DDTHH:MM:SS, timezone Europe/Rome)."
-        ),
-        args_schema=CreateReminderArgs,
-    )
+def get_reminder_tools(service: ReminderService) -> list[Tool]:
     async def create_reminder(
         args: CreateReminderArgs, user_context: UserContext, application: Any
     ) -> ToolResult:
         try:
-            # Parse datetime string
             time_str = args.remind_at.replace(" ", "T")
             dt = datetime.fromisoformat(time_str)
 
-            # Ensure Europe/Rome timezone
             rome = ZoneInfo("Europe/Rome")
             dt = dt.replace(tzinfo=rome) if dt.tzinfo is None else dt.astimezone(rome)
         except Exception:
@@ -68,7 +58,6 @@ def register_reminder_tools(registry: ToolRegistry, service: ReminderService):
                 ),
             )
 
-        # Validate that the datetime is in the future
         now = datetime.now(ZoneInfo("Europe/Rome"))
         if dt <= now:
             return ToolResult(
@@ -104,14 +93,6 @@ def register_reminder_tools(registry: ToolRegistry, service: ReminderService):
                 success=False, message=f"Errore durante la creazione del promemoria: {str(e)}"
             )
 
-    @registry.register(
-        name="reminder-list",
-        description=(
-            "Elenca tutti i promemoria attivi (non ancora inviati e programmati "
-            "per il futuro) per l'utente corrente."
-        ),
-        args_schema=ListRemindersArgs,
-    )
     async def list_reminders(
         args: ListRemindersArgs, user_context: UserContext, application: Any
     ) -> ToolResult:
@@ -144,11 +125,6 @@ def register_reminder_tools(registry: ToolRegistry, service: ReminderService):
                 success=False, message=f"Errore durante il recupero dei promemoria: {str(e)}"
             )
 
-    @registry.register(
-        name="reminder-delete",
-        description="Elimina un promemoria esistente identificato dal suo ID numerico.",
-        args_schema=DeleteReminderArgs,
-    )
     async def delete_reminder(
         args: DeleteReminderArgs, user_context: UserContext, application: Any
     ) -> ToolResult:
@@ -180,13 +156,6 @@ def register_reminder_tools(registry: ToolRegistry, service: ReminderService):
                 success=False, message=f"Errore durante l'eliminazione del promemoria: {str(e)}"
             )
 
-    @registry.register(
-        name="reminder-update",
-        description=(
-            "Modifica il testo o la data/ora di un promemoria esistente usando il suo ID numerico."
-        ),
-        args_schema=UpdateReminderArgs,
-    )
     async def update_reminder(
         args: UpdateReminderArgs, user_context: UserContext, application: Any
     ) -> ToolResult:
@@ -198,7 +167,6 @@ def register_reminder_tools(registry: ToolRegistry, service: ReminderService):
                 rome = ZoneInfo("Europe/Rome")
                 dt = dt.replace(tzinfo=rome) if dt.tzinfo is None else dt.astimezone(rome)
 
-                # Validate date is in the future
                 now = datetime.now(ZoneInfo("Europe/Rome"))
                 if dt <= now:
                     return ToolResult(
@@ -254,3 +222,39 @@ def register_reminder_tools(registry: ToolRegistry, service: ReminderService):
             return ToolResult(
                 success=False, message=f"Errore durante l'aggiornamento del promemoria: {str(e)}"
             )
+
+    return [
+        FunctionTool(
+            name="reminder-create",
+            description=(
+                "Crea un nuovo promemoria. Richiede il testo e la data/ora a cui "
+                "inviarlo (in formato ISO YYYY-MM-DDTHH:MM:SS, timezone Europe/Rome)."
+            ),
+            args_schema=CreateReminderArgs,
+            func=create_reminder,
+        ),
+        FunctionTool(
+            name="reminder-list",
+            description=(
+                "Elenca tutti i promemoria attivi (non ancora inviati e programmati "
+                "per il futuro) per l'utente corrente."
+            ),
+            args_schema=ListRemindersArgs,
+            func=list_reminders,
+        ),
+        FunctionTool(
+            name="reminder-delete",
+            description="Elimina un promemoria esistente identificato dal suo ID numerico.",
+            args_schema=DeleteReminderArgs,
+            func=delete_reminder,
+        ),
+        FunctionTool(
+            name="reminder-update",
+            description=(
+                "Modifica il testo o la data/ora di un promemoria esistente"
+                " usando il suo ID numerico."
+            ),
+            args_schema=UpdateReminderArgs,
+            func=update_reminder,
+        ),
+    ]

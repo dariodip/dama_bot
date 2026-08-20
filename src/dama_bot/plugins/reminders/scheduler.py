@@ -42,7 +42,7 @@ def schedule_reminder(application, reminder):
 
 def restore_pending_reminders(application):
     from dama_bot.database.connection import SessionLocal
-    from dama_bot.database.repository import ReminderRepository
+    from dama_bot.plugins.reminders.repository import ReminderRepository
 
     repo = ReminderRepository(SessionLocal)
     reminders = repo.get_pending()
@@ -72,7 +72,7 @@ def cancel_reminder_job(job_queue, reminder_id: int):
 
 def mark_as_sent(reminder_id: int):
     from dama_bot.database.connection import SessionLocal
-    from dama_bot.database.repository import ReminderRepository
+    from dama_bot.plugins.reminders.repository import ReminderRepository
 
     repo = ReminderRepository(SessionLocal)
     repo.mark_sent(reminder_id)

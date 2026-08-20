@@ -1,9 +1,9 @@
 import logging
 from datetime import datetime
 
-from dama_bot.database.models import ReminderDB
-from dama_bot.database.repository import ReminderRepository
-from dama_bot.handlers.reminders.scheduler import cancel_reminder_job, schedule_reminder
+from dama_bot.plugins.reminders.models import ReminderDB
+from dama_bot.plugins.reminders.repository import ReminderRepository
+from dama_bot.plugins.reminders.scheduler import cancel_reminder_job, schedule_reminder
 
 logger = logging.getLogger(__name__)
 

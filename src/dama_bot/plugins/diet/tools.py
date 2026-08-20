@@ -5,9 +5,9 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 from dama_bot.agent.models import ToolResult, UserContext
-from dama_bot.agent.registry import ToolRegistry
-from dama_bot.database.models import MealType
-from dama_bot.services.diet import DietService
+from dama_bot.agent.plugin import FunctionTool, Tool
+from dama_bot.plugins.diet.models import MealType
+from dama_bot.plugins.diet.service import DietService
 
 logger = logging.getLogger(__name__)
 
@@ -25,18 +25,7 @@ class GetMealsByDayAndMealType(BaseModel):
     )
 
 
-def register_diet_tools(registry: ToolRegistry, service: DietService):
-
-    @registry.register(
-        name="diet-get_meals_by_day",
-        description=(
-            "Recupera tutti i pasti per un utente per un dato giorno."
-            "Da non usare se l'utente chiede un pasto specifico."
-            "Richiede la data in formato YYYY-MM-DD."
-            "Specifica sempre l'utente che ha richiesto l'informazione nel messaggio."
-        ),
-        args_schema=GetMealsByDay,
-    )
+def get_diet_tools(service: DietService) -> list[Tool]:
     async def get_meals_by_day(
         args: GetMealsByDay, user_context: UserContext, application: Any
     ) -> ToolResult:
@@ -57,16 +46,6 @@ def register_diet_tools(registry: ToolRegistry, service: DietService):
                 message=f"Errore durante il recupero dei pasti per il giorno {args.date}: {str(e)}",
             )
 
-    @registry.register(
-        name="diet-get_meals_by_day_and_meal_type",
-        description=(
-            "Recupera un tipo di pasto per un utente per un dato giorno."
-            "Il tipo di pasto può essere colazione, spuntino, merenda, pranzo e cena."
-            "Richiede la data in formato YYYY-MM-DD e il tipo di pasto."
-            "Specifica sempre l'utente che ha richiesto l'informazione nel messaggio."
-        ),
-        args_schema=GetMealsByDayAndMealType,
-    )
     async def get_meals_by_day_and_meal_type(
         args: GetMealsByDayAndMealType, user_context: UserContext, application: Any
     ) -> ToolResult:
@@ -90,3 +69,28 @@ def register_diet_tools(registry: ToolRegistry, service: DietService):
                 message="Errore durante il recupero del pasto"
                 + f" {args.meal_type} per il giorno {args.date}: {str(e)}",
             )
+
+    return [
+        FunctionTool(
+            name="diet-get_meals_by_day",
+            description=(
+                "Recupera tutti i pasti per un utente per un dato giorno."
+                "Da non usare se l'utente chiede un pasto specifico."
+                "Richiede la data in formato YYYY-MM-DD."
+                "Specifica sempre l'utente che ha richiesto l'informazione nel messaggio."
+            ),
+            args_schema=GetMealsByDay,
+            func=get_meals_by_day,
+        ),
+        FunctionTool(
+            name="diet-get_meals_by_day_and_meal_type",
+            description=(
+                "Recupera un tipo di pasto per un utente per un dato giorno."
+                "Il tipo di pasto può essere colazione, spuntino, merenda, pranzo e cena."
+                "Richiede la data in formato YYYY-MM-DD e il tipo di pasto."
+                "Specifica sempre l'utente che ha richiesto l'informazione nel messaggio."
+            ),
+            args_schema=GetMealsByDayAndMealType,
+            func=get_meals_by_day_and_meal_type,
+        ),
+    ]

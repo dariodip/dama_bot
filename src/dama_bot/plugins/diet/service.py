@@ -1,8 +1,8 @@
 import logging
 from datetime import date
 
-from dama_bot.database.models import Meal, MealDay, MealType
-from dama_bot.database.repository import DietRepository
+from dama_bot.plugins.diet.models import Meal, MealDay, MealType
+from dama_bot.plugins.diet.repository import DietRepository
 
 logger = logging.getLogger(__name__)
 

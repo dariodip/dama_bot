@@ -9,6 +9,7 @@ help:
 	@echo ""
 	@echo "Development:"
 	@echo "  make run              Start the Telegram bot"
+	@echo "  make plugin-new NAME=name  Create a new plugin scaffold"
 	@echo ""
 	@echo "Quality:"
 	@echo "  make lint             Run Ruff"
@@ -26,6 +27,10 @@ help:
 
 run:
 	$(PYTHON) dama-bot
+
+plugin-new:
+	@if [ -z "$(NAME)" ]; then echo "Error: NAME is required. Usage: make plugin-new NAME=<plugin_name>"; exit 1; fi
+	$(PYTHON) scripts/new_plugin.py $(NAME)
 
 
 test:

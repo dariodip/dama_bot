@@ -3,8 +3,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from dama_bot.database.models import FreeDayDB
-from dama_bot.services.free_day import FreeDayService
+from dama_bot.plugins.free_day.models import FreeDayDB
+from dama_bot.plugins.free_day.service import FreeDayService
 
 
 @pytest.fixture

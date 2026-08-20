@@ -2,9 +2,9 @@ from datetime import date
 
 import pytest
 
-from dama_bot.database.models import MealType
-from dama_bot.database.repository import DietRepository
-from dama_bot.services.diet import DietService
+from dama_bot.plugins.diet.models import MealType
+from dama_bot.plugins.diet.repository import DietRepository
+from dama_bot.plugins.diet.service import DietService
 
 
 @pytest.fixture
