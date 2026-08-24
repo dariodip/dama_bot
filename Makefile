@@ -46,6 +46,9 @@ format:
 check: format
 	ruff check .
 
+complexity:
+	uv run complexipy .
+
 clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete
