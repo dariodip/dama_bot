@@ -13,3 +13,4 @@ wheels/
 *.sqlite3
 data/diet/*
 !data/diet/Example.yml
+.complexipy_cache/
