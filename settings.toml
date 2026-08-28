@@ -1,0 +1,7 @@
+[plugins]
+enabled = [
+    "reminders",
+    "free_day",
+    "garbage",
+    "diet"
+]

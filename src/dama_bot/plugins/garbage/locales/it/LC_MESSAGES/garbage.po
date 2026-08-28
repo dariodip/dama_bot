@@ -1,0 +1,45 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: dama_bot-garbage 0.1.0\n"
+"POT-Creation-Date: 2026-08-24 15:00+0200\n"
+"PO-Revision-Date: 2026-08-24 15:00+0200\n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Multimaterial"
+msgstr "Multimateriale"
+
+msgid "Organic"
+msgstr "Organico"
+
+msgid "Diapers"
+msgstr "Pannolini"
+
+msgid "Paper & Cardboard"
+msgstr "Carta & Cartone"
+
+msgid "Residual Waste"
+msgstr "Indifferenziata"
+
+msgid "Glass"
+msgstr "Vetro"
+
+msgid "None"
+msgstr "Niente"
+
+msgid "The garbage type for {date} is {garbage_type}"
+msgstr "Il tipo di rifiuto per il {date} è {garbage_type}"
+
+msgid "The week of {date} is an indifferenziata week"
+msgstr "La settimana del {date} è una settimana dell'indifferenziata"
+
+msgid "The week of {date} is not an indifferenziata week"
+msgstr "La settimana del {date} non è una settimana dell'indifferenziata"
+
+msgid "Error retrieving garbage type: {error}"
+msgstr "Errore durante il recupero del tipo di rifiuto: {error}"
+
+msgid "Error checking week type: {error}"
+msgstr "Errore durante il controllo della settimana: {error}"

@@ -1,0 +1,42 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: dama_bot 0.1.0\n"
+"POT-Creation-Date: 2026-08-24 15:00+0200\n"
+"PO-Revision-Date: 2026-08-24 15:00+0200\n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Hello {name}! I am DamaBot and I am here to help you."
+msgstr "Ciao {name}! Sono DamaBot e sono qui per aiutarti."
+
+msgid "Available commands:\n\n/start: start the bot\n/help: print this help message\n/version: print the bot version\n/tools: list available tools\n"
+msgstr "Comandi disponibili:\n\n/start: avvia il bot\n/help: stampa questo messaggio di aiuto\n/version: stampa la versione del bot\n/tools: elenca gli strumenti disponibili\n"
+
+msgid "Dama Bot {version}"
+msgstr "Dama Bot {version}"
+
+msgid "These are the tools I can use:\n{tools}"
+msgstr "Questi sono gli strumenti che posso usare:\n{tools}"
+
+msgid "Sorry, I encountered a communication problem with my artificial intelligence module. Please try again later."
+msgstr "Scusa, ho riscontrato un problema di comunicazione con il mio modulo di intelligenza artificiale. Riprova più tardi."
+
+msgid "Sorry, the operation required too many steps and could not be completed."
+msgstr "Scusa, l'operazione ha richiesto troppi passaggi e non è stato possibile completarla."
+
+msgid "Sorry, an unexpected error occurred. Please try again later."
+msgstr "Scusa, si è verificato un errore imprevisto. Riprova più tardi."
+
+msgid "Tool '{name}' not found."
+msgstr "Strumento '{name}' non trovato."
+
+msgid "Invalid arguments for tool '{name}': {error}"
+msgstr "Argomenti non validi per lo strumento '{name}': {error}"
+
+msgid "Unexpected error while executing tool '{name}': {error}"
+msgstr "Errore imprevisto durante l'esecuzione dello strumento '{name}': {error}"
+
+msgid "Answer in English in a concise, natural, and helpful manner."
+msgstr "Rispondi in italiano in modo conciso, naturale e utile."

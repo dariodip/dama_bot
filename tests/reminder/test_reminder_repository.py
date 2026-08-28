@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from dama_bot.database.repository import ReminderRepository
+from dama_bot.plugins.reminders.repository import ReminderRepository
 
 
 def test_reminder_repository_create(db_session_factory):

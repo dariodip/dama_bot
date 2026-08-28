@@ -7,6 +7,7 @@ class UserContext(BaseModel):
     user_id: int
     chat_id: int
     username: str | None = None
+    language: str = "en"
 
 
 class ToolResult(BaseModel):

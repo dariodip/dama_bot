@@ -1,0 +1,36 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: dama_bot-diet 0.1.0\n"
+"POT-Creation-Date: 2026-08-24 15:00+0200\n"
+"PO-Revision-Date: 2026-08-24 15:00+0200\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Meals for @{username} on {date}:\n\n{meals}"
+msgstr "Meals for @{username} on {date}:\n\n{meals}"
+
+msgid "{meal_type} for @{username} on {date}:\n\n{meal}"
+msgstr "{meal_type} for @{username} on {date}:\n\n{meal}"
+
+msgid "Error retrieving meals for {date}: {error}"
+msgstr "Error retrieving meals for {date}: {error}"
+
+msgid "Error retrieving meal {meal_type} for {date}: {error}"
+msgstr "Error retrieving meal {meal_type} for {date}: {error}"
+
+msgid "Breakfast"
+msgstr "Breakfast"
+
+msgid "Morning Snack"
+msgstr "Morning Snack"
+
+msgid "Lunch"
+msgstr "Lunch"
+
+msgid "Afternoon Snack"
+msgstr "Afternoon Snack"
+
+msgid "Dinner"
+msgstr "Dinner"

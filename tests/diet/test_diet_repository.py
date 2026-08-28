@@ -1,7 +1,7 @@
 from datetime import date
 
-from dama_bot.database.models import MealType
-from dama_bot.database.repository import DietRepository
+from dama_bot.plugins.diet.models import MealType
+from dama_bot.plugins.diet.repository import DietRepository
 
 
 def test_get_meals_by_day():

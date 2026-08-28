@@ -4,13 +4,13 @@
 ![GitHub Release](https://img.shields.io/github/v/release/dariodip/dama_bot)
 
 
-A personal Telegram assistant for Dario and Manuela, powered by an **agent-first architecture**. Natural-language messages are routed through an OpenAI-backed agent that decides which registered tools to invoke, keeping Telegram as a thin interface layer.
+A personal Telegram assistant, powered by an **agent-first architecture**. Natural-language messages are routed through an OpenAI-backed agent that decides which registered tools to invoke, keeping Telegram as a thin interface layer.
 
-This is a personal project and is not intended for public use. It is a work in progress and is subject to change at any time. I've decided to document the design and implementation decisions in the [docs](docs) directory to share my learning process with the community.
+This is a personal project developed as a pet project to experiment with AI and agent-based architectures. It is a work in progress and is subject to change at any time. I've decided to document the design and implementation decisions in the [docs](docs) directory to share my learning process with the community.
 
 ## Features
 
-| Domain | Tools | Persistence |
+| Plugin | Tools | Persistence |
 |---|---|---|
 | **Reminders** | `reminder-create`, `reminder-list`, `reminder-delete`, `reminder-update` | SQLite |
 | **Free Days** | `free_day-create`, `free_day-is_a_free_day`, `free_day-next` | SQLite |
@@ -21,33 +21,44 @@ Slash commands `/start`, `/help`, and `/version` are handled directly by Telegra
 
 ## Architecture
 
-```
+```text
 Telegram message
-  → handlers/message_handler (generic entry point)
-  → Agent (OpenAI chat completions loop, max 5 turns)
-  → ToolRegistry → Tool function
-  → Domain Service
-  → Repository / Infrastructure (SQLite, YAML, in-memory)
+  ↓
+handlers/message_handler (generic entry point)
+  ↓
+Agent (OpenAI chat completions loop, max 5 turns)
+  ↓
+Plugin Loader (discovers & loads enabled plugins)
+  ↓
+Plugins (e.g. reminders, weather)
+  ↓
+Tools (e.g. reminder-create)
+  ↓
+Services
+  ↓
+Infrastructure (SQLite, Telegram API, YAML, etc.)
 ```
 
 See [docs/agent-architecture.md](docs/agent-architecture.md) for the full design document.
 
 ## Project Structure
 
-```
+```text
 src/dama_bot/
 ├── main.py                  # Entry point
 ├── bot.py                   # Application factory, post-init hooks
 ├── config.py                # Environment and settings
 ├── agent/
 │   ├── core.py              # Agent (OpenAI loop)
-│   ├── registry.py          # ToolRegistry + Tool
-│   ├── models.py            # UserContext, ToolResult, AgentResponse
-│   └── tools/
-│       ├── reminder.py      # Reminder CRUD tools
-│       ├── free_day.py      # Free day tools
-│       ├── garbage.py       # Garbage schedule tools
-│       └── diet.py          # Diet plan tools
+│   ├── registry.py          # ToolRegistry
+│   ├── plugin.py            # Plugin and Tool protocols
+│   ├── loader.py            # PluginLoader
+│   └── models.py            # UserContext, ToolResult, AgentResponse
+├── plugins/                 # Extensible capabilities
+│   ├── reminders/
+│   ├── free_day/
+│   ├── garbage/
+│   └── diet/
 ├── handlers/
 │   ├── __init__.py          # Handler registration
 │   ├── message_handler.py   # Generic text → Agent bridge
@@ -67,6 +78,8 @@ src/dama_bot/
     ├── models.py             # ORM models + domain enums
     └── repository.py         # Data access layer
 
+settings.toml                 # Configuration of the bot
+scripts/new_plugin.py         # Bootstrap script for new plugins
 tests/                        # Mirrors src/ structure
 data/diet/                    # Per-user YAML diet plans
 scripts/deploy.sh             # rsync + systemd deploy to Raspberry Pi
@@ -95,8 +108,33 @@ cp .env.dev.example .env.dev
 | `TELEGRAM_BOT_TOKEN` | — | Telegram bot API token |
 | `OPENAI_API_KEY` | — | OpenAI API key |
 | `OPENAI_MODEL` | `gpt-5-nano` | OpenAI model identifier |
+| `DEFAULT_LANGUAGE` | `en` | Default / fallback language (`en` or `it`) |
 | `SQLITE_URL` | `sqlite:///data/dama_bot.sqlite3` | SQLAlchemy database URL |
 | `APP_ENV` | `dev` | `dev` loads `.env.dev`, `prod` loads `.env` |
+
+### Internationalization (i18n)
+
+The bot supports **English (`en`)** and **Italian (`it`)** using GNU `gettext` message catalogs (`.po` / `.mo` files).
+- English (`en`) is the default and fallback language.
+- Each plugin owns its translations in `src/dama_bot/plugins/<plugin_name>/locales/`.
+- Compile translations using:
+  ```bash
+  make compile-locales
+  ```
+
+### Enabling Plugins
+
+The `settings.toml` file controls which plugins are enabled. Only enabled plugins will expose their tools to the Agent:
+
+```toml
+[plugins]
+enabled = [
+    "reminders",
+    "free_day",
+    "garbage",
+    "diet"
+]
+```
 
 ## Running
 
@@ -136,14 +174,19 @@ This syncs the project, installs dependencies with `uv sync`, and restarts the `
 
 ## Adding a New Capability
 
-1. **Define the tool contract** — create argument/result Pydantic models
-2. **Create the service** in `services/` (business logic, no LLM awareness)
-3. **Create the repository** in `database/` if persistence is needed
-4. **Register the tool** in `agent/tools/` using `@registry.register(...)`
-5. **Wire it up** in `handlers/message_handler.py`
-6. **Write tests** covering the tool, service, and repository layers
+Capabilities are added by creating a new plugin.
 
-The agent will automatically discover and use the new tool based on its description.
+1. **Scaffold the plugin** using the Makefile:
+   ```bash
+   make plugin-new NAME=weather
+   ```
+2. **Define the tool contract** — update the generated Pydantic models.
+3. **Implement the logic** — preferably in a dedicated service inside `src/dama_bot/services/`.
+4. **Wire the plugin** — implement `get_plugin()` in `src/dama_bot/plugins/weather/plugin.py`.
+5. **Enable the plugin** — add `"weather"` to the `enabled` list in `settings.toml`.
+6. **Write tests** covering the tool, service, and repository layers.
+
+The Agent will automatically discover and use the tools provided by enabled plugins.
 
 ## License
 

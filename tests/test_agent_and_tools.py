@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 
 from dama_bot.agent.core import Agent
 from dama_bot.agent.models import ToolResult, UserContext
+from dama_bot.agent.plugin import FunctionTool
 from dama_bot.agent.registry import ToolRegistry
 
 
@@ -19,11 +20,17 @@ def registry():
 
 
 def test_tool_registry_registration(registry):
-    @registry.register(
-        name="dummy.tool", description="A dummy tool for testing", args_schema=DummyArgs
-    )
     def dummy_func(args, user_context, application):
         return ToolResult(success=True, message=f"Got {args.value}")
+
+    registry.register_tool(
+        FunctionTool(
+            name="dummy.tool",
+            description="A dummy tool for testing",
+            args_schema=DummyArgs,
+            func=dummy_func,
+        )
+    )
 
     assert "dummy.tool" in registry.tools
     tool = registry.tools["dummy.tool"]
@@ -33,9 +40,12 @@ def test_tool_registry_registration(registry):
 
 @pytest.mark.asyncio
 async def test_tool_registry_execution_success(registry):
-    @registry.register(name="dummy.tool", description="Desc", args_schema=DummyArgs)
     async def dummy_func(args, user_context, application):
         return ToolResult(success=True, message=f"Value: {args.value}")
+
+    registry.register_tool(
+        FunctionTool(name="dummy.tool", description="Desc", args_schema=DummyArgs, func=dummy_func)
+    )
 
     ctx = UserContext(user_id=1, chat_id=2)
     res = await registry.execute("dummy.tool", '{"value": "hello"}', ctx, None)
@@ -46,15 +56,18 @@ async def test_tool_registry_execution_success(registry):
 
 @pytest.mark.asyncio
 async def test_tool_registry_invalid_args(registry):
-    @registry.register(name="dummy.tool", description="Desc", args_schema=DummyArgs)
     def dummy_func(args, user_context, application):
         return ToolResult(success=True, message="ok")
+
+    registry.register_tool(
+        FunctionTool(name="dummy.tool", description="Desc", args_schema=DummyArgs, func=dummy_func)
+    )
 
     ctx = UserContext(user_id=1, chat_id=2)
     # Missing required 'value' key
     res = await registry.execute("dummy.tool", "{}", ctx, None)
     assert res.success is False
-    assert "Parametri non validi" in res.message
+    assert "Invalid arguments" in res.message
 
 
 @pytest.mark.asyncio
@@ -85,9 +98,14 @@ async def test_agent_handle_message_no_tool(mocker, registry):
 @pytest.mark.asyncio
 async def test_agent_handle_message_with_tool_call(mocker, registry):
     # Register a tool
-    @registry.register(name="test.tool", description="Test tool", args_schema=DummyArgs)
     async def dummy_tool(args, user_context, application):
         return ToolResult(success=True, message=f"Tool success: {args.value}")
+
+    registry.register_tool(
+        FunctionTool(
+            name="test.tool", description="Test tool", args_schema=DummyArgs, func=dummy_tool
+        )
+    )
 
     mock_openai = MagicMock()
     mocker.patch("dama_bot.agent.core.AsyncOpenAI", return_value=mock_openai)
@@ -137,3 +155,61 @@ async def test_agent_handle_message_with_tool_call(mocker, registry):
     assert response.message == "Ho eseguito lo strumento per il lavoro."
     assert response.tool_called == "test.tool"
     assert mock_completions.create.call_count == 2
+
+
+@pytest.mark.asyncio
+async def test_agent_system_prompt_language(mocker, registry):
+    mock_openai = MagicMock()
+    mocker.patch("dama_bot.agent.core.AsyncOpenAI", return_value=mock_openai)
+
+    mock_choice = MagicMock()
+    mock_choice.message.content = "OK"
+    mock_choice.message.tool_calls = None
+
+    mock_completions = AsyncMock()
+    mock_completions.create.return_value = MagicMock(choices=[mock_choice])
+    mock_openai.chat.completions = mock_completions
+
+    agent = Agent(registry)
+
+    # Test Italian context
+    ctx_it = UserContext(user_id=1, chat_id=2, language="it")
+    await agent.handle_message("Ciao", ctx_it, None)
+    called_messages_it = mock_completions.create.call_args_list[-1][1]["messages"]
+    sys_prompt_it = called_messages_it[0]["content"]
+    assert "Rispondi in italiano in modo conciso, naturale e utile." in sys_prompt_it
+
+    # Test English context
+    ctx_en = UserContext(user_id=1, chat_id=2, language="en")
+    await agent.handle_message("Hello", ctx_en, None)
+    called_messages_en = mock_completions.create.call_args_list[-1][1]["messages"]
+    sys_prompt_en = called_messages_en[0]["content"]
+    assert "Answer in English in a concise, natural, and helpful manner." in sys_prompt_en
+
+    # Test fallback context
+    ctx_unknown = UserContext(user_id=1, chat_id=2, language="fr")
+    await agent.handle_message("Bonjour", ctx_unknown, None)
+    called_messages_unknown = mock_completions.create.call_args_list[-1][1]["messages"]
+    sys_prompt_unknown = called_messages_unknown[0]["content"]
+    assert "Answer in English in a concise, natural, and helpful manner." in sys_prompt_unknown
+
+
+@pytest.mark.asyncio
+async def test_agent_error_messages_localized(mocker, registry):
+    mock_openai = MagicMock()
+    mocker.patch("dama_bot.agent.core.AsyncOpenAI", return_value=mock_openai)
+    mock_completions = AsyncMock()
+    mock_completions.create.side_effect = Exception("API error")
+    mock_openai.chat.completions = mock_completions
+
+    agent = Agent(registry)
+
+    # Italian
+    ctx_it = UserContext(user_id=1, chat_id=2, language="it")
+    res_it = await agent.handle_message("Ciao", ctx_it, None)
+    assert "Scusa, ho riscontrato un problema di comunicazione" in res_it.message
+
+    # English
+    ctx_en = UserContext(user_id=1, chat_id=2, language="en")
+    res_en = await agent.handle_message("Hello", ctx_en, None)
+    assert "Sorry, I encountered a communication problem" in res_en.message

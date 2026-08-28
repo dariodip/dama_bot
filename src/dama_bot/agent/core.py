@@ -8,6 +8,7 @@ from openai import AsyncOpenAI
 from dama_bot.agent.models import AgentResponse, UserContext
 from dama_bot.agent.registry import ToolRegistry
 from dama_bot.config import OPENAI_API_KEY, OPENAI_MODEL
+from dama_bot.i18n import get_translation
 
 logger = logging.getLogger(__name__)
 
@@ -20,11 +21,12 @@ class Agent:
     async def handle_message(
         self, message: str, user_context: UserContext, application: Any
     ) -> AgentResponse:
+        _ = get_translation(user_context.language).gettext
         now = datetime.now(ZoneInfo("Europe/Rome"))
+        lang_instruction = _("Answer in English in a concise, natural, and helpful manner.")
 
         system_prompt = f"""You are Dama Bot, 
-a personal Telegram assistant for Dario and Manuela, 
-a couple living in Italy.
+a personal Telegram assistant.
 Current local date and time: {now.isoformat()} (timezone: Europe/Rome).
 
 You must help the user by using the registered tools.
@@ -34,7 +36,7 @@ You must help the user by using the registered tools.
   that you cannot perform it. Do not pretend or simulate it.
 - Ask for clarification if required arguments (like dates/times for a reminder) are
   missing and cannot be safely inferred. Do not make up IDs or dates.
-- Answer in Italian in a concise, natural, and helpful manner.
+- {lang_instruction}
 - If a date is not specified, assume that it is today. 
 - If only a day of the week is specified, assume it is the next occurrence of that day.
 - If not specified, assume that weeks, months and years are the current ones.
@@ -66,9 +68,9 @@ You must help the user by using the registered tools.
             except Exception as e:
                 logger.error(f"OpenAI completion error: {e}")
                 return AgentResponse(
-                    message=(
-                        "Scusa, ho riscontrato un problema di comunicazione con il "
-                        "mio modulo di intelligenza artificiale. Riprova più tardi."
+                    message=_(
+                        "Sorry, I encountered a communication problem with my artificial "
+                        "intelligence module. Please try again later."
                     ),
                     tool_called=last_tool_called,
                 )
@@ -115,9 +117,6 @@ You must help the user by using the registered tools.
 
         # If we exceeded the turn count without returning a text response, return an error
         return AgentResponse(
-            message=(
-                "Scusa, l'operazione ha richiesto troppi passaggi e non è stato "
-                "possibile completarla."
-            ),
+            message=_("Sorry, the operation required too many steps and could not be completed."),
             tool_called=last_tool_called,
         )

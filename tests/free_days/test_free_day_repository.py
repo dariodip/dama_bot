@@ -1,6 +1,6 @@
 from datetime import date
 
-from dama_bot.database.repository import FreeDayRepository
+from dama_bot.plugins.free_day.repository import FreeDayRepository
 
 
 def test_free_day_repository_create(db_session_factory):

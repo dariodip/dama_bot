@@ -1,0 +1,57 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: dama_bot-reminders 0.1.0\n"
+"POT-Creation-Date: 2026-08-24 15:00+0200\n"
+"PO-Revision-Date: 2026-08-24 15:00+0200\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Reminder successfully created for {time}."
+msgstr "Reminder successfully created for {time}."
+
+msgid "You currently have no active reminders."
+msgstr "You currently have no active reminders."
+
+msgid "Here are your active reminders:"
+msgstr "Here are your active reminders:"
+
+msgid "- [{id}] \"{text}\" scheduled for {time}"
+msgstr "- [{id}] \"{text}\" scheduled for {time}"
+
+msgid "Reminder {id} successfully deleted."
+msgstr "Reminder {id} successfully deleted."
+
+msgid "Reminder with ID {id} not found or you are not authorized to delete it."
+msgstr "Reminder with ID {id} not found or you are not authorized to delete it."
+
+msgid "Reminder with ID {id} not found or you are not authorized to edit it."
+msgstr "Reminder with ID {id} not found or you are not authorized to edit it."
+
+msgid "Reminder {id} successfully updated. New status: \"{text}\" for {time}."
+msgstr "Reminder {id} successfully updated. New status: \"{text}\" for {time}."
+
+msgid "Invalid date format '{date_str}'. Use ISO format YYYY-MM-DDTHH:MM:SS."
+msgstr "Invalid date format '{date_str}'. Use ISO format YYYY-MM-DDTHH:MM:SS."
+
+msgid "Cannot schedule a reminder in the past. Please specify a future date and time."
+msgstr "Cannot schedule a reminder in the past. Please specify a future date and time."
+
+msgid "Error creating reminder: {error}"
+msgstr "Error creating reminder: {error}"
+
+msgid "Error retrieving reminders: {error}"
+msgstr "Error retrieving reminders: {error}"
+
+msgid "Error deleting reminder: {error}"
+msgstr "Error deleting reminder: {error}"
+
+msgid "Error updating reminder: {error}"
+msgstr "Error updating reminder: {error}"
+
+msgid "Reminder:\n\n{text}"
+msgstr "Reminder:\n\n{text}"
+
+msgid "%d/%m/%Y at %H:%M"
+msgstr "%d/%m/%Y at %H:%M"

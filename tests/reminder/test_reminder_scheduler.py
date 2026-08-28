@@ -2,9 +2,9 @@ from datetime import UTC, datetime, timedelta
 from unittest.mock import MagicMock
 from zoneinfo import ZoneInfo
 
-from dama_bot.database.models import ReminderDB
-from dama_bot.database.repository import ReminderRepository
-from dama_bot.handlers.reminders.scheduler import (
+from dama_bot.plugins.reminders.models import ReminderDB
+from dama_bot.plugins.reminders.repository import ReminderRepository
+from dama_bot.plugins.reminders.scheduler import (
     cancel_reminder_job,
     ensure_rome_tz,
     restore_pending_reminders,
@@ -57,7 +57,7 @@ def test_cancel_reminder_job():
 
 def test_restore_pending_reminders(db_session_factory, mocker):
     repo = ReminderRepository(db_session_factory)
-    mocker.patch("dama_bot.database.repository.ReminderRepository.get_pending")
+    mocker.patch("dama_bot.plugins.reminders.repository.ReminderRepository.get_pending")
 
     future_time = datetime.now() + timedelta(hours=2)
     # Simple setup
