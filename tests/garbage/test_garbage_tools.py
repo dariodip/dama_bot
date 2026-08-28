@@ -29,14 +29,21 @@ async def test_garbage_tool_type_for_day(registry, service_mock):
     expected_garbage = MULTIMATERIALE
 
     args_json = f'{{"date": "{test_str}"}}'
-    ctx = UserContext(user_id=456, chat_id=123, username="dario")
     app_mock = MagicMock()
 
-    res = await registry.execute("garbage-get_garbage_type_for_day", args_json, ctx, app_mock)
+    # English test
+    ctx_en = UserContext(user_id=456, chat_id=123, username="dario", language="en")
+    res_en = await registry.execute("garbage-get_garbage_type_for_day", args_json, ctx_en, app_mock)
+    assert res_en.success is True
+    assert f"The garbage type for {test_str} is {expected_garbage}" in res_en.message
+    assert res_en.data["garbage_type"] == expected_garbage
 
-    assert res.success is True
-    assert f"Il tipo di rifiuto per il {test_str} è {expected_garbage}" in res.message
-    assert res.data["garbage_type"] == expected_garbage
+    # Italian test
+    ctx_it = UserContext(user_id=456, chat_id=123, username="dario", language="it")
+    res_it = await registry.execute("garbage-get_garbage_type_for_day", args_json, ctx_it, app_mock)
+    assert res_it.success is True
+    assert f"Il tipo di rifiuto per il {test_str} è {expected_garbage}" in res_it.message
+    assert res_it.data["garbage_type"] == expected_garbage
 
 
 @pytest.mark.asyncio
@@ -46,14 +53,21 @@ async def test_garbage_tool_is_not_indifferenziato_week(registry, service_mock):
     expected_indifferenziato_week = False
 
     args_json = f'{{"date": "{test_str}"}}'
-    ctx = UserContext(user_id=456, chat_id=123, username="dario")
     app_mock = MagicMock()
 
-    res = await registry.execute("garbage-is_indifferenziato_week", args_json, ctx, app_mock)
+    # English test
+    ctx_en = UserContext(user_id=456, chat_id=123, username="dario", language="en")
+    res_en = await registry.execute("garbage-is_indifferenziato_week", args_json, ctx_en, app_mock)
+    assert res_en.success is True
+    assert f"The week of {test_str} is not an indifferenziata week" in res_en.message
+    assert res_en.data["is_indifferenziato_week"] == expected_indifferenziato_week
 
-    assert res.success is True
-    assert f"La settimana del {test_str} non è una settimana dell'indifferenziata" in res.message
-    assert res.data["is_indifferenziato_week"] == expected_indifferenziato_week
+    # Italian test
+    ctx_it = UserContext(user_id=456, chat_id=123, username="dario", language="it")
+    res_it = await registry.execute("garbage-is_indifferenziato_week", args_json, ctx_it, app_mock)
+    assert res_it.success is True
+    assert f"La settimana del {test_str} non è una settimana dell'indifferenziata" in res_it.message
+    assert res_it.data["is_indifferenziato_week"] == expected_indifferenziato_week
 
 
 @pytest.mark.asyncio
@@ -63,11 +77,18 @@ async def test_garbage_tool_is_indifferenziato_week(registry, service_mock):
     expected_indifferenziato_week = True
 
     args_json = f'{{"date": "{test_str}"}}'
-    ctx = UserContext(user_id=456, chat_id=123, username="dario")
     app_mock = MagicMock()
 
-    res = await registry.execute("garbage-is_indifferenziato_week", args_json, ctx, app_mock)
+    # English test
+    ctx_en = UserContext(user_id=456, chat_id=123, username="dario", language="en")
+    res_en = await registry.execute("garbage-is_indifferenziato_week", args_json, ctx_en, app_mock)
+    assert res_en.success is True
+    assert f"The week of {test_str} is an indifferenziata week" in res_en.message
+    assert res_en.data["is_indifferenziato_week"] == expected_indifferenziato_week
 
-    assert res.success is True
-    assert f"La settimana del {test_str} è una settimana dell'indifferenziata" in res.message
-    assert res.data["is_indifferenziato_week"] == expected_indifferenziato_week
+    # Italian test
+    ctx_it = UserContext(user_id=456, chat_id=123, username="dario", language="it")
+    res_it = await registry.execute("garbage-is_indifferenziato_week", args_json, ctx_it, app_mock)
+    assert res_it.success is True
+    assert f"La settimana del {test_str} è una settimana dell'indifferenziata" in res_it.message
+    assert res_it.data["is_indifferenziato_week"] == expected_indifferenziato_week

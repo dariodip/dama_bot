@@ -2,7 +2,7 @@
 
 ## Mission
 
-You are working on `dama_bot`, a personal Telegram assistant for two users (Dario and Manuela).
+You are working on `dama_bot`, a personal Telegram powered-AI assistant.
 
 The project uses an **agent-first architecture**:
 Telegram message → Agent → Plugin Loader → Plugins → Tools → Domain service → Persistence/infrastructure.
@@ -61,7 +61,7 @@ The agent should:
 2. Decide whether it can answer directly or needs a tool.
 3. Call zero or more registered tools.
 4. Observe tool results.
-5. Produce a concise natural-language response in Italian.
+5. Produce a concise natural-language response in the user's language (Italian or English).
 6. Never claim a tool succeeded unless the tool result says it succeeded.
 7. Never claim an operation was performed when no tool was invoked.
 8. Ask a clarification question when required arguments are genuinely missing and cannot be safely inferred.

@@ -60,15 +60,22 @@ async def test_diet_tool_get_meals_by_day(registry, service_mock):
     )
 
     args_json = f'{{"date": "{test_str}"}}'
-    ctx = UserContext(user_id=456, chat_id=123, username="Example")
     app_mock = MagicMock()
 
-    res = await registry.execute("diet-get_meals_by_day", args_json, ctx, app_mock)
+    # English test
+    ctx_en = UserContext(user_id=456, chat_id=123, username="Example", language="en")
+    res_en = await registry.execute("diet-get_meals_by_day", args_json, ctx_en, app_mock)
+    assert res_en.success is True
+    assert f"Meals for @{ctx_en.username} on {test_str}:" in res_en.message
+    assert str(expected_meals) in res_en.message
 
-    assert res.success is True
-    assert f"Pasti per @{ctx.username} il {test_str}:" in res.message
-    assert str(expected_meals) in res.message
-    assert res.data["meals"] == expected_meals
+    # Italian test
+    ctx_it = UserContext(user_id=456, chat_id=123, username="Example", language="it")
+    res_it = await registry.execute("diet-get_meals_by_day", args_json, ctx_it, app_mock)
+    assert res_it.success is True
+    assert f"Pasti per @{ctx_it.username} il {test_str}:" in res_it.message
+    assert str(expected_meals) in res_it.message
+    assert res_it.data["meals"] == expected_meals
 
 
 @pytest.mark.asyncio
@@ -85,12 +92,23 @@ async def test_diet_tool_get_meals_by_day_and_meal_type(registry, service_mock):
     )
 
     args_json = f'{{"date": "{test_str}", "meal_type": "COLAZIONE"}}'
-    ctx = UserContext(user_id=456, chat_id=123, username="Example")
     app_mock = MagicMock()
 
-    res = await registry.execute("diet-get_meals_by_day_and_meal_type", args_json, ctx, app_mock)
+    # English test
+    ctx_en = UserContext(user_id=456, chat_id=123, username="Example", language="en")
+    res_en = await registry.execute(
+        "diet-get_meals_by_day_and_meal_type", args_json, ctx_en, app_mock
+    )
+    assert res_en.success is True
+    assert f"Colazione for @{ctx_en.username} on {test_str}:" in res_en.message
+    assert str(expected_meal) in res_en.message
 
-    assert res.success is True
-    assert f"Colazione per @{ctx.username} il {test_str}:" in res.message
-    assert str(expected_meal) in res.message
-    assert res.data["meal"] == expected_meal
+    # Italian test
+    ctx_it = UserContext(user_id=456, chat_id=123, username="Example", language="it")
+    res_it = await registry.execute(
+        "diet-get_meals_by_day_and_meal_type", args_json, ctx_it, app_mock
+    )
+    assert res_it.success is True
+    assert f"Colazione per @{ctx_it.username} il {test_str}:" in res_it.message
+    assert str(expected_meal) in res_it.message
+    assert res_it.data["meal"] == expected_meal

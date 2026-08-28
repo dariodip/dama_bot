@@ -4,6 +4,8 @@ from zoneinfo import ZoneInfo
 
 from telegram.ext import ContextTypes
 
+from dama_bot.plugins.reminders.i18n import get_translation
+
 logger = logging.getLogger(__name__)
 
 
@@ -17,11 +19,15 @@ def ensure_rome_tz(dt: datetime) -> datetime:
 
 async def send_reminder(context: ContextTypes.DEFAULT_TYPE):
     job = context.job
+    if not job or not job.data:
+        return
     reminder = job.data
 
     logger.info(f"Sending reminder {reminder['id']}")
 
-    await context.bot.send_message(chat_id=job.chat_id, text=f"Ricordati:\n\n{reminder['text']}")
+    _ = get_translation("it").gettext
+    msg_text = _("Reminder:\n\n{text}").format(text=reminder["text"])
+    await context.bot.send_message(chat_id=job.chat_id, text=msg_text)
 
     mark_as_sent(reminder["id"])
 

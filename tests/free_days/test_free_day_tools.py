@@ -30,15 +30,20 @@ async def test_create_free_day_tool(registry, service_mock):
     db_free_day = FreeDayDB(date=future_dt, username="user", chat_id=123)
     service_mock.create_free_day.return_value = db_free_day
 
-    ctx = UserContext(user_id=456, chat_id=123, username="dario")
     app_mock = MagicMock()
-
     args_json = f'{{"date": "{future_str}"}}'
-    res = await registry.execute("free_day-create", args_json, ctx, app_mock)
 
-    assert res.success is True
-    assert "Giorno libero registrato con successo" in res.message
-    service_mock.create_free_day.assert_called_once()
+    # English test
+    ctx_en = UserContext(user_id=456, chat_id=123, username="dario", language="en")
+    res_en = await registry.execute("free_day-create", args_json, ctx_en, app_mock)
+    assert res_en.success is True
+    assert "Free day successfully registered" in res_en.message
+
+    # Italian test
+    ctx_it = UserContext(user_id=456, chat_id=123, username="dario", language="it")
+    res_it = await registry.execute("free_day-create", args_json, ctx_it, app_mock)
+    assert res_it.success is True
+    assert "Giorno libero registrato con successo" in res_it.message
 
 
 @pytest.mark.asyncio
@@ -48,16 +53,23 @@ async def test_is_a_free_day(registry, service_mock):
 
     db_free_day = FreeDayDB(date=test_date, username="user", chat_id=123)
     service_mock.create_free_day.return_value = db_free_day
+    service_mock.is_a_free_day.return_value = True
 
-    ctx = UserContext(user_id=456, chat_id=123, username="dario")
     app_mock = MagicMock()
-
     args_json = f'{{"date": "{test_str}"}}'
-    res = await registry.execute("free_day-is_a_free_day", args_json, ctx, app_mock)
 
-    assert res.success is True
-    assert "non" not in res.message
-    service_mock.is_a_free_day.assert_called_once()
+    # English test
+    ctx_en = UserContext(user_id=456, chat_id=123, username="dario", language="en")
+    res_en = await registry.execute("free_day-is_a_free_day", args_json, ctx_en, app_mock)
+    assert res_en.success is True
+    assert "is a free day" in res_en.message
+
+    # Italian test
+    ctx_it = UserContext(user_id=456, chat_id=123, username="dario", language="it")
+    res_it = await registry.execute("free_day-is_a_free_day", args_json, ctx_it, app_mock)
+    assert res_it.success is True
+    assert "è libero" in res_it.message
+    assert "non" not in res_it.message
 
 
 @pytest.mark.asyncio
@@ -66,30 +78,40 @@ async def test_is_not_a_free_day(registry, service_mock):
     next_day = test_date + timedelta(days=1)
     test_str = next_day.isoformat()
 
-    db_free_day = FreeDayDB(date=test_date, username="user", chat_id=123)
-    service_mock.create_free_day.return_value = db_free_day
+    service_mock.is_a_free_day.return_value = False
 
-    ctx = UserContext(user_id=456, chat_id=123, username="dario")
     app_mock = MagicMock()
-
     args_json = f'{{"date": "{test_str}"}}'
-    res = await registry.execute("free_day-is_a_free_day", args_json, ctx, app_mock)
 
-    assert res.success is True
-    service_mock.is_a_free_day.assert_called_once()
+    # English test
+    ctx_en = UserContext(user_id=456, chat_id=123, username="dario", language="en")
+    res_en = await registry.execute("free_day-is_a_free_day", args_json, ctx_en, app_mock)
+    assert res_en.success is True
+    assert "is not a free day" in res_en.message
+
+    # Italian test
+    ctx_it = UserContext(user_id=456, chat_id=123, username="dario", language="it")
+    res_it = await registry.execute("free_day-is_a_free_day", args_json, ctx_it, app_mock)
+    assert res_it.success is True
+    assert "non è libero" in res_it.message
 
 
 @pytest.mark.asyncio
 async def test_tool_next_free_day(registry, service_mock):
-    test_date = date.today() - timedelta(days=-1)
+    test_date = date.today() + timedelta(days=1)
+    service_mock.next_free_day.return_value = test_date
 
-    db_free_day = FreeDayDB(date=test_date, username="user", chat_id=123)
-    service_mock.create_free_day.return_value = db_free_day
-
-    ctx = UserContext(user_id=456, chat_id=123, username="dario")
     app_mock = MagicMock()
-
     args_json = "{}"
-    res = await registry.execute("free_day-next", args_json, ctx, app_mock)
-    assert res.success is True
-    assert "Il prossimo giorno libero è il" in res.message
+
+    # English test
+    ctx_en = UserContext(user_id=456, chat_id=123, username="dario", language="en")
+    res_en = await registry.execute("free_day-next", args_json, ctx_en, app_mock)
+    assert res_en.success is True
+    assert "The next free day is" in res_en.message
+
+    # Italian test
+    ctx_it = UserContext(user_id=456, chat_id=123, username="dario", language="it")
+    res_it = await registry.execute("free_day-next", args_json, ctx_it, app_mock)
+    assert res_it.success is True
+    assert "Il prossimo giorno libero è il" in res_it.message

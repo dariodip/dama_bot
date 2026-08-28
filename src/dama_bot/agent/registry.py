@@ -6,6 +6,7 @@ from pydantic import ValidationError
 
 from dama_bot.agent.models import ToolResult, UserContext
 from dama_bot.agent.plugin import Tool
+from dama_bot.i18n import get_translation
 
 logger = logging.getLogger(__name__)
 
@@ -38,8 +39,13 @@ class ToolRegistry:
     async def execute(
         self, name: str, args_str: str, user_context: UserContext, application: Any
     ) -> ToolResult:
+        _ = get_translation(user_context.language).gettext
+
         if name not in self.tools:
-            return ToolResult(success=False, message=f"Strumento '{name}' non trovato.")
+            return ToolResult(
+                success=False,
+                message=_("Tool '{name}' not found.").format(name=name),
+            )
 
         tool = self.tools[name]
         try:
@@ -47,7 +53,10 @@ class ToolRegistry:
             args = tool.args_schema(**args_dict)
         except (json.JSONDecodeError, ValidationError) as e:
             return ToolResult(
-                success=False, message=f"Invalid arguments for tool '{name}': {str(e)}"
+                success=False,
+                message=_("Invalid arguments for tool '{name}': {error}").format(
+                    name=name, error=str(e)
+                ),
             )
 
         try:
@@ -63,5 +72,7 @@ class ToolRegistry:
             logger.exception(f"Unexpected error while executing tool '{name}': {str(e)}")
             return ToolResult(
                 success=False,
-                message=f"Unexpected error while executing tool '{name}': {str(e)}",
+                message=_("Unexpected error while executing tool '{name}': {error}").format(
+                    name=name, error=str(e)
+                ),
             )

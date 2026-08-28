@@ -4,13 +4,13 @@
 ![GitHub Release](https://img.shields.io/github/v/release/dariodip/dama_bot)
 
 
-A personal Telegram assistant for Dario and Manuela, powered by an **agent-first architecture**. Natural-language messages are routed through an OpenAI-backed agent that decides which registered tools to invoke, keeping Telegram as a thin interface layer.
+A personal Telegram assistant, powered by an **agent-first architecture**. Natural-language messages are routed through an OpenAI-backed agent that decides which registered tools to invoke, keeping Telegram as a thin interface layer.
 
-This is a personal project and is not intended for public use. It is a work in progress and is subject to change at any time. I've decided to document the design and implementation decisions in the [docs](docs) directory to share my learning process with the community.
+This is a personal project developed as a pet project to experiment with AI and agent-based architectures. It is a work in progress and is subject to change at any time. I've decided to document the design and implementation decisions in the [docs](docs) directory to share my learning process with the community.
 
 ## Features
 
-| Domain | Tools | Persistence |
+| Plugin | Tools | Persistence |
 |---|---|---|
 | **Reminders** | `reminder-create`, `reminder-list`, `reminder-delete`, `reminder-update` | SQLite |
 | **Free Days** | `free_day-create`, `free_day-is_a_free_day`, `free_day-next` | SQLite |
@@ -108,8 +108,19 @@ cp .env.dev.example .env.dev
 | `TELEGRAM_BOT_TOKEN` | — | Telegram bot API token |
 | `OPENAI_API_KEY` | — | OpenAI API key |
 | `OPENAI_MODEL` | `gpt-5-nano` | OpenAI model identifier |
+| `DEFAULT_LANGUAGE` | `en` | Default / fallback language (`en` or `it`) |
 | `SQLITE_URL` | `sqlite:///data/dama_bot.sqlite3` | SQLAlchemy database URL |
 | `APP_ENV` | `dev` | `dev` loads `.env.dev`, `prod` loads `.env` |
+
+### Internationalization (i18n)
+
+The bot supports **English (`en`)** and **Italian (`it`)** using GNU `gettext` message catalogs (`.po` / `.mo` files).
+- English (`en`) is the default and fallback language.
+- Each plugin owns its translations in `src/dama_bot/plugins/<plugin_name>/locales/`.
+- Compile translations using:
+  ```bash
+  make compile-locales
+  ```
 
 ### Enabling Plugins
 

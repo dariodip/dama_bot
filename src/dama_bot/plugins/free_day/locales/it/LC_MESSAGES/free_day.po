@@ -1,0 +1,36 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: dama_bot-free_day 0.1.0\n"
+"POT-Creation-Date: 2026-08-24 15:00+0200\n"
+"PO-Revision-Date: 2026-08-24 15:00+0200\n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Free day successfully registered for {date}."
+msgstr "Giorno libero registrato con successo per il {date}."
+
+msgid "The day {date} is a free day"
+msgstr "Il giorno {date} è libero"
+
+msgid "The day {date} is not a free day"
+msgstr "Il giorno {date} non è libero"
+
+msgid "No free day has been registered."
+msgstr "Non è stato registrato alcun giorno libero."
+
+msgid "No free day has been registered. First register one with the 'free_day-create' tool."
+msgstr "Non è stato registrato alcun giorno libero. Per prima cosa registrane uno con il tool 'free_day-create'."
+
+msgid "The next free day is {date}"
+msgstr "Il prossimo giorno libero è il {date}"
+
+msgid "Error registering free day: {error}"
+msgstr "Errore durante la registrazione del giorno libero: {error}"
+
+msgid "Error checking if day is a free day: {error}"
+msgstr "Errore durante il controllo se un giorno è un giorno libero: {error}"
+
+msgid "Error retrieving next free day: {error}"
+msgstr "Errore durante il recupero del prossimo giorno libero: {error}"

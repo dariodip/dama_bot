@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 
 from dama_bot.agent.models import ToolResult, UserContext
 from dama_bot.agent.plugin import FunctionTool, Tool
+from dama_bot.plugins.diet.i18n import get_translation
 from dama_bot.plugins.diet.models import MealType
 from dama_bot.plugins.diet.service import DietService
 
@@ -13,15 +14,17 @@ logger = logging.getLogger(__name__)
 
 
 class GetMealsByDay(BaseModel):
-    date: str = Field(..., description="La data del giorno in formato YYYY-MM-DD")
+    date: str = Field(..., description="The date in YYYY-MM-DD format")
 
 
 class GetMealsByDayAndMealType(BaseModel):
-    date: str = Field(..., description="La data del giorno in formato YYYY-MM-DD")
+    date: str = Field(..., description="The date in YYYY-MM-DD format")
     meal_type: str = Field(
         ...,
-        description="Il tipo di pasto da recuperare. "
-        + "Accetta i valori 'colazione', 'merenda', 'pranzo', 'cena', 'spuntino'",
+        description=(
+            "The meal type to retrieve. Accepts"
+            " 'colazione', 'merenda', 'pranzo', 'cena', 'spuntino'"
+        ),
     )
 
 
@@ -29,11 +32,15 @@ def get_diet_tools(service: DietService) -> list[Tool]:
     async def get_meals_by_day(
         args: GetMealsByDay, user_context: UserContext, application: Any
     ) -> ToolResult:
+        lang = user_context.language
+        _ = get_translation(lang).gettext
         try:
             username = user_context.username or f"user_{user_context.user_id}"
             day = date.fromisoformat(args.date)
             meals = service.get_meals_by_day(username=username, day=day)
-            msg = f"Pasti per @{username} il {args.date}:\n\n{meals}"
+            msg = _("Meals for @{username} on {date}:\n\n{meals}").format(
+                username=username, date=args.date, meals=meals
+            )
             return ToolResult(
                 success=True,
                 message=msg,
@@ -43,12 +50,16 @@ def get_diet_tools(service: DietService) -> list[Tool]:
             logger.exception("Error getting meals by day in tool")
             return ToolResult(
                 success=False,
-                message=f"Errore durante il recupero dei pasti per il giorno {args.date}: {str(e)}",
+                message=_("Error retrieving meals for {date}: {error}").format(
+                    date=args.date, error=str(e)
+                ),
             )
 
     async def get_meals_by_day_and_meal_type(
         args: GetMealsByDayAndMealType, user_context: UserContext, application: Any
     ) -> ToolResult:
+        lang = user_context.language
+        _ = get_translation(lang).gettext
         try:
             username = user_context.username or f"user_{user_context.user_id}"
             day = date.fromisoformat(args.date)
@@ -56,7 +67,10 @@ def get_diet_tools(service: DietService) -> list[Tool]:
             meal = service.get_meals_by_day_and_meal_type(
                 username=username, day=day, meal_type=meal_type
             )
-            msg = f"{args.meal_type.lower().capitalize()} per @{username} il {args.date}:\n\n{meal}"
+            meal_name = args.meal_type.lower().capitalize()
+            msg = _("{meal_type} for @{username} on {date}:\n\n{meal}").format(
+                meal_type=meal_name, username=username, date=args.date, meal=meal
+            )
             return ToolResult(
                 success=True,
                 message=msg,
@@ -66,29 +80,22 @@ def get_diet_tools(service: DietService) -> list[Tool]:
             logger.exception("Error getting meals by day and meal type in tool")
             return ToolResult(
                 success=False,
-                message="Errore durante il recupero del pasto"
-                + f" {args.meal_type} per il giorno {args.date}: {str(e)}",
+                message=_("Error retrieving meal {meal_type} for {date}: {error}").format(
+                    meal_type=args.meal_type, date=args.date, error=str(e)
+                ),
             )
 
     return [
         FunctionTool(
             name="diet-get_meals_by_day",
-            description=(
-                "Recupera tutti i pasti per un utente per un dato giorno."
-                "Da non usare se l'utente chiede un pasto specifico."
-                "Richiede la data in formato YYYY-MM-DD."
-                "Specifica sempre l'utente che ha richiesto l'informazione nel messaggio."
-            ),
+            description="Retrieve all meals for a user for a given day in YYYY-MM-DD format.",
             args_schema=GetMealsByDay,
             func=get_meals_by_day,
         ),
         FunctionTool(
             name="diet-get_meals_by_day_and_meal_type",
             description=(
-                "Recupera un tipo di pasto per un utente per un dato giorno."
-                "Il tipo di pasto può essere colazione, spuntino, merenda, pranzo e cena."
-                "Richiede la data in formato YYYY-MM-DD e il tipo di pasto."
-                "Specifica sempre l'utente che ha richiesto l'informazione nel messaggio."
+                "Retrieve a specific meal type for a user for a given day in YYYY-MM-DD format."
             ),
             args_schema=GetMealsByDayAndMealType,
             func=get_meals_by_day_and_meal_type,

@@ -34,6 +34,47 @@ def main():
     # Create __init__.py
     (base_dir / "__init__.py").write_text(f'"""{plugin_name.capitalize()} plugin."""\n')
 
+    # Create i18n.py
+    i18n_code = f"""import gettext
+from pathlib import Path
+
+from dama_bot.i18n import normalize_language
+
+LOCALES_DIR = Path(__file__).parent / "locales"
+
+
+def get_translation(lang: str | None = None) -> gettext.NullTranslations:
+    normalized = normalize_language(lang)
+    return gettext.translation(
+        domain="{plugin_name}",
+        localedir=str(LOCALES_DIR),
+        languages=[normalized],
+        fallback=True,
+    )
+"""
+    (base_dir / "i18n.py").write_text(i18n_code)
+
+    # Create locales directories and initial po files
+    for lang in ["en", "it"]:
+        po_dir = base_dir / "locales" / lang / "LC_MESSAGES"
+        po_dir.mkdir(parents=True, exist_ok=True)
+        if lang == "it":
+            example_msgstr = "Esempio strumento eseguito con argomento: {arg}"
+        else:
+            example_msgstr = "Example tool executed with arg: {arg}"
+        po_content = f"""msgid ""
+msgstr ""
+"Project-Id-Version: dama_bot-{plugin_name} 0.1.0\\n"
+"Language: {lang}\\n"
+"MIME-Version: 1.0\\n"
+"Content-Type: text/plain; charset=UTF-8\\n"
+"Content-Transfer-Encoding: 8bit\\n"
+
+msgid "Example tool executed with arg: {{arg}}"
+msgstr "{example_msgstr}"
+"""
+        (po_dir / f"{plugin_name}.po").write_text(po_content)
+
     # Create tools.py
     tools_code = f"""import logging
 from typing import Any
@@ -42,6 +83,7 @@ from pydantic import BaseModel, Field
 
 from dama_bot.agent.models import ToolResult, UserContext
 from dama_bot.agent.plugin import FunctionTool, Tool
+from dama_bot.plugins.{plugin_name}.i18n import get_translation
 
 logger = logging.getLogger(__name__)
 
@@ -52,10 +94,12 @@ def get_{plugin_name}_tools() -> list[Tool]:
     async def example_tool(
         args: ExampleToolArgs, user_context: UserContext, application: Any
     ) -> ToolResult:
+        lang = user_context.language
+        _ = get_translation(lang).gettext
         try:
             return ToolResult(
                 success=True,
-                message=f"Example tool executed with arg: {{args.example_arg}}",
+                message=_("Example tool executed with arg: {{arg}}").format(arg=args.example_arg),
             )
         except Exception as e:
             logger.exception("Error in example_tool")
@@ -97,6 +141,7 @@ def get_plugin() -> Plugin:
     (base_dir / "plugin.py").write_text(plugin_code)
 
     print(f"Success! Plugin '{plugin_name}' created at {base_dir}")
+    print("Run `make compile-locales` to compile newly created translation catalogs.")
     print("Don't forget to enable it in settings.toml!")
 
 

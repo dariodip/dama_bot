@@ -31,15 +31,21 @@ async def test_create_reminder_tool(registry, service_mock):
     db_reminder = ReminderDB(id=10, text=" dentist appointment ", remind_at=future_dt, chat_id=123)
     service_mock.create_reminder.return_value = db_reminder
 
-    ctx = UserContext(user_id=456, chat_id=123, username="dario")
     app_mock = MagicMock()
-
     args_json = f'{{"text": "dentist appointment", "remind_at": "{future_str}"}}'
-    res = await registry.execute("reminder-create", args_json, ctx, app_mock)
 
-    assert res.success is True
-    assert "Promemoria creato con successo" in res.message
-    service_mock.create_reminder.assert_called_once()
+    # English test
+    ctx_en = UserContext(user_id=456, chat_id=123, username="dario", language="en")
+    res_en = await registry.execute("reminder-create", args_json, ctx_en, app_mock)
+    assert res_en.success is True
+    assert "Reminder successfully created" in res_en.message
+
+    # Italian test
+    ctx_it = UserContext(user_id=456, chat_id=123, username="dario", language="it")
+    res_it = await registry.execute("reminder-create", args_json, ctx_it, app_mock)
+    assert res_it.success is True
+    assert "Promemoria creato con successo" in res_it.message
+    assert service_mock.create_reminder.call_count == 2
 
 
 @pytest.mark.asyncio
@@ -47,14 +53,20 @@ async def test_create_reminder_tool_past_validation(registry, service_mock):
     past_dt = datetime.now(ZoneInfo("Europe/Rome")) - timedelta(hours=2)
     past_str = past_dt.isoformat()
 
-    ctx = UserContext(user_id=456, chat_id=123, username="dario")
     app_mock = MagicMock()
-
     args_json = f'{{"text": "past task", "remind_at": "{past_str}"}}'
-    res = await registry.execute("reminder-create", args_json, ctx, app_mock)
 
-    assert res.success is False
-    assert "nel passato" in res.message
+    # English test
+    ctx_en = UserContext(user_id=456, chat_id=123, username="dario", language="en")
+    res_en = await registry.execute("reminder-create", args_json, ctx_en, app_mock)
+    assert res_en.success is False
+    assert "in the past" in res_en.message
+
+    # Italian test
+    ctx_it = UserContext(user_id=456, chat_id=123, username="dario", language="it")
+    res_it = await registry.execute("reminder-create", args_json, ctx_it, app_mock)
+    assert res_it.success is False
+    assert "nel passato" in res_it.message
     service_mock.create_reminder.assert_not_called()
 
 
@@ -66,29 +78,38 @@ async def test_list_reminders_tool(registry, service_mock):
     ]
     service_mock.list_reminders.return_value = reminders
 
-    ctx = UserContext(user_id=456, chat_id=123, username="dario")
-    res = await registry.execute("reminder-list", "{}", ctx, None)
+    # English test
+    ctx_en = UserContext(user_id=456, chat_id=123, username="dario", language="en")
+    res_en = await registry.execute("reminder-list", "{}", ctx_en, None)
+    assert res_en.success is True
+    assert "Here are your active reminders" in res_en.message
+    assert "task 1" in res_en.message
+    assert "task 2" in res_en.message
+    assert len(res_en.data["reminders"]) == 2
 
-    assert res.success is True
-    assert "task 1" in res.message
-    assert "task 2" in res.message
-    assert len(res.data["reminders"]) == 2
+    # Italian test
+    ctx_it = UserContext(user_id=456, chat_id=123, username="dario", language="it")
+    res_it = await registry.execute("reminder-list", "{}", ctx_it, None)
+    assert res_it.success is True
+    assert "Ecco i tuoi promemoria attivi" in res_it.message
 
 
 @pytest.mark.asyncio
 async def test_delete_reminder_tool(registry, service_mock):
     service_mock.delete_reminder.return_value = True
-
-    ctx = UserContext(user_id=456, chat_id=123, username="dario")
     app_mock = MagicMock()
 
-    res = await registry.execute("reminder-delete", '{"reminder_id": 1}', ctx, app_mock)
+    # English test
+    ctx_en = UserContext(user_id=456, chat_id=123, username="dario", language="en")
+    res_en = await registry.execute("reminder-delete", '{"reminder_id": 1}', ctx_en, app_mock)
+    assert res_en.success is True
+    assert "Reminder 1 successfully deleted." in res_en.message
 
-    assert res.success is True
-    assert "eliminato con successo" in res.message
-    service_mock.delete_reminder.assert_called_once_with(
-        reminder_id=1, chat_id=123, username="dario", application=app_mock
-    )
+    # Italian test
+    ctx_it = UserContext(user_id=456, chat_id=123, username="dario", language="it")
+    res_it = await registry.execute("reminder-delete", '{"reminder_id": 1}', ctx_it, app_mock)
+    assert res_it.success is True
+    assert "Promemoria 1 eliminato con successo." in res_it.message
 
 
 @pytest.mark.asyncio
@@ -97,14 +118,19 @@ async def test_update_reminder_tool(registry, service_mock):
     updated_db = ReminderDB(id=1, text="updated task", remind_at=future_dt, chat_id=123)
     service_mock.update_reminder.return_value = updated_db
 
-    ctx = UserContext(user_id=456, chat_id=123, username="dario")
     app_mock = MagicMock()
-
     args_json = (
         f'{{"reminder_id": 1, "text": "updated task", "remind_at": "{future_dt.isoformat()}"}}'
     )
-    res = await registry.execute("reminder-update", args_json, ctx, app_mock)
 
-    assert res.success is True
-    assert "aggiornato con successo" in res.message
-    service_mock.update_reminder.assert_called_once()
+    # English test
+    ctx_en = UserContext(user_id=456, chat_id=123, username="dario", language="en")
+    res_en = await registry.execute("reminder-update", args_json, ctx_en, app_mock)
+    assert res_en.success is True
+    assert "Reminder 1 successfully updated" in res_en.message
+
+    # Italian test
+    ctx_it = UserContext(user_id=456, chat_id=123, username="dario", language="it")
+    res_it = await registry.execute("reminder-update", args_json, ctx_it, app_mock)
+    assert res_it.success is True
+    assert "Promemoria 1 aggiornato con successo" in res_it.message

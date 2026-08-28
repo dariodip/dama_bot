@@ -6,17 +6,18 @@ from pydantic import BaseModel, Field
 
 from dama_bot.agent.models import ToolResult, UserContext
 from dama_bot.agent.plugin import FunctionTool, Tool
+from dama_bot.plugins.free_day.i18n import get_translation
 from dama_bot.plugins.free_day.service import FreeDayService
 
 logger = logging.getLogger(__name__)
 
 
 class CreateFreeDay(BaseModel):
-    date: str = Field(..., description="La data del giorno libero in formato YYYY-MM-DD")
+    date: str = Field(..., description="The date of the free day in YYYY-MM-DD format")
 
 
 class IsAFreeDay(BaseModel):
-    date: str = Field(..., description="La data da controllare in formato YYYY-MM-DD")
+    date: str = Field(..., description="The date to check in YYYY-MM-DD format")
 
 
 class NextFreeDay(BaseModel):
@@ -27,6 +28,8 @@ def get_free_day_tools(service: FreeDayService) -> list[Tool]:
     async def create_free_day(
         args: CreateFreeDay, user_context: UserContext, application: Any
     ) -> ToolResult:
+        lang = user_context.language
+        _ = get_translation(lang).gettext
         try:
             day = date.fromisoformat(args.date)
             service.create_free_day(
@@ -36,18 +39,20 @@ def get_free_day_tools(service: FreeDayService) -> list[Tool]:
             )
             return ToolResult(
                 success=True,
-                message=f"Giorno libero registrato con successo per il {args.date}.",
+                message=_("Free day successfully registered for {date}.").format(date=args.date),
             )
         except Exception as e:
             logger.exception("Error creating free day in tool")
             return ToolResult(
                 success=False,
-                message=f"Errore durante la registrazione del giorno libero: {str(e)}",
+                message=_("Error registering free day: {error}").format(error=str(e)),
             )
 
     async def is_a_free_day(
         args: IsAFreeDay, user_context: UserContext, application: Any
     ) -> ToolResult:
+        lang = user_context.language
+        _ = get_translation(lang).gettext
         try:
             day = date.fromisoformat(args.date)
             is_free = service.is_a_free_day(
@@ -55,7 +60,11 @@ def get_free_day_tools(service: FreeDayService) -> list[Tool]:
                 chat_id=user_context.chat_id,
                 username=user_context.username or f"user_{user_context.user_id}",
             )
-            msg = f"Il giorno {args.date}{'' if is_free else ' non'} è libero"
+            msg = (
+                _("The day {date} is a free day").format(date=args.date)
+                if is_free
+                else _("The day {date} is not a free day").format(date=args.date)
+            )
             return ToolResult(
                 success=True,
                 message=msg,
@@ -65,12 +74,14 @@ def get_free_day_tools(service: FreeDayService) -> list[Tool]:
             logger.exception("Error checking if a day is a free day in tool")
             return ToolResult(
                 success=False,
-                message=f"Errore durante il controllo se un giorno è un giorno libero: {str(e)}",
+                message=_("Error checking if day is a free day: {error}").format(error=str(e)),
             )
 
     async def next_free_day(
         args: NextFreeDay, user_context: UserContext, application: Any
     ) -> ToolResult:
+        lang = user_context.language
+        _ = get_translation(lang).gettext
         try:
             day = service.next_free_day(
                 chat_id=user_context.chat_id,
@@ -79,10 +90,10 @@ def get_free_day_tools(service: FreeDayService) -> list[Tool]:
             if day is None:
                 return ToolResult(
                     success=True,
-                    message="Non è stato registrato alcun giorno libero.",
+                    message=_("No free day has been registered."),
                     data={"date": None},
                 )
-            msg = f"Il prossimo giorno libero è il {day}"
+            msg = _("The next free day is {date}").format(date=day)
             return ToolResult(
                 success=True,
                 message=msg,
@@ -92,34 +103,34 @@ def get_free_day_tools(service: FreeDayService) -> list[Tool]:
             logger.error(f"Error getting next free day in tool: {str(ve)}")
             return ToolResult(
                 success=True,
-                message="Non è stato registrato alcun giorno libero. "
-                + "Per prima cosa registrane uno con il tool 'create_free_day'.",
+                message=_(
+                    "No free day has been registered. "
+                    "First register one with the 'free_day-create' tool."
+                ),
             )
         except Exception as e:
             logger.exception("Error getting next free day in tool")
             return ToolResult(
                 success=False,
-                message=f"Errore durante il recupero del prossimo giorno libero: {str(e)}",
+                message=_("Error retrieving next free day: {error}").format(error=str(e)),
             )
 
     return [
         FunctionTool(
             name="free_day-create",
-            description=("Registra un giorno libero.Richiede la data in formato YYYY-MM-DD."),
+            description="Register a free day. Requires the date in YYYY-MM-DD format.",
             args_schema=CreateFreeDay,
             func=create_free_day,
         ),
         FunctionTool(
             name="free_day-is_a_free_day",
-            description=(
-                "Controlla se un giorno è un giorno libero.Richiede la data in formato YYYY-MM-DD."
-            ),
+            description="Check if a date is a free day. Requires the date in YYYY-MM-DD format.",
             args_schema=IsAFreeDay,
             func=is_a_free_day,
         ),
         FunctionTool(
             name="free_day-next",
-            description=("Trova il prossimo giorno libero a partire da oggi."),
+            description="Find the next upcoming free day starting from today.",
             args_schema=NextFreeDay,
             func=next_free_day,
         ),
